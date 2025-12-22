@@ -62,7 +62,14 @@ export function CashFlowAnalytics() {
                                         ))}
                                     </Pie>
                                     <Tooltip
-                                        contentStyle={{ backgroundColor: '#18181b', border: '1px solid #27272a' }}
+                                        contentStyle={{
+                                            backgroundColor: "#1e293b",
+                                            borderColor: "#475569",
+                                            color: "#f8fafc",
+                                            borderRadius: "8px"
+                                        }}
+                                        itemStyle={{ color: "#f8fafc" }}
+                                        labelStyle={{ color: "#f8fafc" }}
                                         formatter={(value: number) => [formatCurrency(value), 'Amount']}
                                     />
                                     <Legend layout="vertical" align="right" verticalAlign="middle" />
@@ -95,8 +102,14 @@ export function CashFlowAnalytics() {
                                     <Tooltip
                                         formatter={(value: number) => formatCurrency(value)}
                                         labelFormatter={(date) => new Date(date).toLocaleDateString()}
-                                        contentStyle={{ backgroundColor: "#1A1F2C", borderColor: "#403E43", color: "#FFFFFF" }}
-                                        itemStyle={{ color: "#FFFFFF" }}
+                                        contentStyle={{
+                                            backgroundColor: "#1e293b",
+                                            borderColor: "#475569",
+                                            color: "#f8fafc",
+                                            borderRadius: "8px"
+                                        }}
+                                        itemStyle={{ color: "#f8fafc" }}
+                                        labelStyle={{ color: "#f8fafc" }}
                                     />
                                     <Area type="monotone" dataKey="amount" stroke="#EF4444" fillOpacity={1} fill="url(#colorSplit)" />
                                 </AreaChart>
