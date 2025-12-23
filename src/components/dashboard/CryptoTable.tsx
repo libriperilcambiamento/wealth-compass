@@ -431,7 +431,7 @@ export function CryptoTable({ holdings, onAdd, onUpdate, onDelete }: CryptoTable
                     <TableRow key={h.id}>
                       <TableCell className="font-mono font-medium">{h.symbol}</TableCell>
                       <TableCell>{h.name}</TableCell>
-                      <TableCell className="text-right font-mono">{h.quantity}</TableCell>
+                      <TableCell className="text-right font-mono">{h.quantity.toLocaleString('en-US', { maximumFractionDigits: 20 })}</TableCell>
                       <TableCell className="text-right hidden sm:table-cell">{isPrivacyMode ? "****" : formatCurrency(h.avgBuyPrice)}</TableCell>
                       <TableCell className="text-right hidden sm:table-cell">
                         <div className="flex flex-col items-end">

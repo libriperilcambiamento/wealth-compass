@@ -1,5 +1,7 @@
 import { useFinance } from '@/contexts/FinanceContext';
 import { CryptoTable } from '@/components/dashboard/CryptoTable';
+import { CryptoAllocationChart, CryptoPerformanceChart } from '@/components/dashboard/CryptoCharts';
+import { CryptoSummary } from '@/components/dashboard/CryptoSummary';
 import { FileSpreadsheet } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { exportToCsv } from '@/lib/exportUtils';
@@ -34,6 +36,13 @@ export default function CryptoPage() {
                 <Button variant="outline" onClick={handleExportCsv} className={cn(isPrivacyMode && "blur-sm select-none pointer-events-none")}>
                     <FileSpreadsheet className="h-4 w-4 mr-2" /> Export CSV
                 </Button>
+            </div>
+
+            <CryptoSummary />
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <CryptoAllocationChart />
+                <CryptoPerformanceChart />
             </div>
 
             <CryptoTable
