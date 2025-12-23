@@ -14,7 +14,7 @@ const COLORS = ['#10B981', '#3B82F6', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899'
 export function CashFlowAnalytics() {
     const [period, setPeriod] = useState<Period>('30d');
     const { getExpensesByCategory, getSpendingTimeline } = useChartData();
-    const { formatCurrency } = useSettings();
+    const { formatCurrency, isPrivacyMode } = useSettings();
 
     const expenseData = getExpensesByCategory(period);
     const timelineData = getSpendingTimeline(period);
@@ -70,7 +70,7 @@ export function CashFlowAnalytics() {
                                         }}
                                         itemStyle={{ color: "#f8fafc" }}
                                         labelStyle={{ color: "#f8fafc" }}
-                                        formatter={(value: number) => [formatCurrency(value), 'Amount']}
+                                        formatter={(value: number) => [isPrivacyMode ? "****" : formatCurrency(value), 'Amount']}
                                     />
                                     <Legend layout="vertical" align="right" verticalAlign="middle" />
                                 </PieChart>
@@ -98,9 +98,9 @@ export function CashFlowAnalytics() {
                                     </defs>
                                     <CartesianGrid strokeDasharray="3 3" opacity={0.1} vertical={false} />
                                     <XAxis dataKey="displayDate" fontSize={12} tickLine={false} axisLine={false} minTickGap={30} />
-                                    <YAxis fontSize={12} tickLine={false} axisLine={false} tickFormatter={(val) => `€${val}`} />
+                                    <YAxis hide={isPrivacyMode} fontSize={12} tickLine={false} axisLine={false} tickFormatter={(val) => `€${val}`} />
                                     <Tooltip
-                                        formatter={(value: number) => formatCurrency(value)}
+                                        formatter={(value: number) => isPrivacyMode ? "****" : formatCurrency(value)}
                                         labelFormatter={(date) => new Date(date).toLocaleDateString()}
                                         contentStyle={{
                                             backgroundColor: "#1e293b",

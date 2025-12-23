@@ -6,11 +6,14 @@ import {
     TrendingUp,
     Bitcoin,
     Settings,
-    LogOut
+    LogOut,
+    Shield
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { Separator } from "@/components/ui/separator";
+import { Switch } from "@/components/ui/switch";
+import { useSettings } from "@/contexts/SettingsContext";
 
 const sidebarItems = [
     {
@@ -43,6 +46,7 @@ const sidebarItems = [
 export function Sidebar() {
     const location = useLocation();
     const { signOut } = useAuth();
+    const { isPrivacyMode, togglePrivacyMode } = useSettings();
 
     return (
         <div className="h-full w-full bg-card flex flex-col">
@@ -72,11 +76,15 @@ export function Sidebar() {
                 ))}
             </div>
 
-            <div className="p-4 border-t border-border">
-                <Button variant="ghost" className="w-full justify-start gap-3 text-muted-foreground hover:text-destructive" onClick={() => signOut()}>
+            <div className="p-4 border-t border-border flex items-center gap-2">
+                <Button variant="ghost" className="flex-1 justify-start gap-3 text-muted-foreground hover:text-destructive" onClick={() => signOut()}>
                     <LogOut className="h-5 w-5" />
                     Sign Out
                 </Button>
+                <div className="flex items-center gap-2" title="Toggle Privacy Mode">
+                    <Shield className="h-4 w-4 text-muted-foreground" />
+                    <Switch checked={isPrivacyMode} onCheckedChange={togglePrivacyMode} />
+                </div>
             </div>
         </div>
     );

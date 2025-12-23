@@ -7,7 +7,7 @@ import { ArrowUpRight, ArrowDownLeft, Wallet } from 'lucide-react';
 
 export function RecentActivity() {
     const { data } = useFinance();
-    const { formatCurrency } = useSettings();
+    const { formatCurrency, isPrivacyMode } = useSettings();
 
     // Combine transactions and maybe investment updates? 
     // For now, just transactions as "Activity".
@@ -21,7 +21,7 @@ export function RecentActivity() {
                 <CardTitle>Recent Activity</CardTitle>
             </CardHeader>
             <CardContent>
-                <div className="space-y-4">
+                <div className={cn("space-y-4", isPrivacyMode && "blur-sm select-none pointer-events-none")}>
                     {activity.length === 0 ? (
                         <p className="text-muted-foreground text-sm">No recent activity.</p>
                     ) : (

@@ -7,7 +7,8 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogTrigger } from '@/components/ui/dialog';
-import { Settings, Globe, Shield, Database, ArrowLeft, Eye, EyeOff, Download, Trash2, Moon, Sun } from 'lucide-react';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Settings, Globe, Shield, Database, ArrowLeft, Eye, EyeOff, Download, Trash2, Moon, Sun, Info } from 'lucide-react';
 import { useSettings } from '@/contexts/SettingsContext';
 import { useFinance } from '@/contexts/FinanceContext';
 import { toast } from 'sonner';
@@ -61,7 +62,42 @@ export default function SettingsPage() {
                     <CardContent className="space-y-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <Label>Base Currency</Label>
+                                <div className="flex items-center gap-2">
+                                    <Label>Base Currency</Label>
+                                    <Popover>
+                                        <PopoverTrigger asChild>
+                                            <Button variant="ghost" size="icon" className="h-4 w-4 rounded-full p-0 text-muted-foreground hover:text-primary">
+                                                <Info className="h-3 w-3" />
+                                                <span className="sr-only">View Market Rates</span>
+                                            </Button>
+                                        </PopoverTrigger>
+                                        <PopoverContent className="w-80 p-0" align="start">
+                                            <div className="p-4 border-b border-border bg-secondary/20">
+                                                <div className="flex items-center justify-between mb-1">
+                                                    <h4 className="font-medium leading-none">Live Market Rates</h4>
+                                                    <span className="flex h-2 w-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]" title="Live" />
+                                                </div>
+                                                <p className="text-xs text-muted-foreground">
+                                                    1 {currency} conversions using real-time ECB rates.
+                                                </p>
+                                            </div>
+                                            <div className="p-4 max-h-[300px] overflow-y-auto space-y-2">
+                                                {currencyRates ? (
+                                                    Object.entries(currencyRates).map(([curr, rate]) => (
+                                                        <div key={curr} className="flex justify-between text-sm items-center py-1 border-b border-border/50 last:border-0">
+                                                            <span className="font-medium text-muted-foreground">{curr}</span>
+                                                            <span className="font-mono text-xs">
+                                                                {rate}
+                                                            </span>
+                                                        </div>
+                                                    ))
+                                                ) : (
+                                                    <div className="text-xs text-muted-foreground italic text-center py-4">Loading rates...</div>
+                                                )}
+                                            </div>
+                                        </PopoverContent>
+                                    </Popover>
+                                </div>
                                 <Select value={currency} onValueChange={(v: any) => setCurrency(v)}>
                                     <SelectTrigger><SelectValue /></SelectTrigger>
                                     <SelectContent>
@@ -73,29 +109,8 @@ export default function SettingsPage() {
                                 </Select>
                             </div>
 
-                            <div className="p-4 rounded-lg bg-secondary/50 border border-border/50 space-y-3">
-                                <div className="flex items-center justify-between">
-                                    <span className="text-sm font-medium">Live Market Rate</span>
-                                    <span className="flex h-2 w-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]" />
-                                </div>
-                                <p className="text-xs text-muted-foreground">
-                                    Foreign assets are automatically converted to your Base Currency using real-time ECB rates.
-                                </p>
-
-                                <div className="space-y-1 pt-2">
-                                    {currencyRates ? (
-                                        Object.entries(currencyRates).map(([curr, rate]) => (
-                                            <div key={curr} className="flex justify-between text-sm">
-                                                <span className="text-muted-foreground">{curr}</span>
-                                                <span className="font-mono">
-                                                    1 {currency} = {rate} {curr}
-                                                </span>
-                                            </div>
-                                        ))
-                                    ) : (
-                                        <div className="text-xs text-muted-foreground italic">Loading rates...</div>
-                                    )}
-                                </div>
+                            <div className="hidden md:block">
+                                {/* Spacer or additional info if needed, keeping grid layout balanced */}
                             </div>
                         </div>
                     </CardContent>
@@ -103,22 +118,7 @@ export default function SettingsPage() {
 
 
 
-                {/* Privacy & Interface */}
-                <Card className="glass-card">
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-2"><Shield className="h-5 w-5 text-primary" /> Privacy & Interface</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-6">
-                        <div className="flex items-center justify-between">
-                            <div className="space-y-0.5">
-                                <Label className="text-base">Privacy Mode</Label>
-                                <p className="text-sm text-muted-foreground">Blur sensitive monetary values on the dashboard.</p>
-                            </div>
-                            <Switch checked={isPrivacyMode} onCheckedChange={togglePrivacyMode} />
-                        </div>
-                        {/* Theme is handled by system/class usually, simple placeholder if needed later */}
-                    </CardContent>
-                </Card>
+
 
                 {/* Data Management */}
                 <Card className="glass-card border-destructive/20">

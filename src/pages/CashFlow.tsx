@@ -18,7 +18,7 @@ import { exportToCsv } from '@/lib/exportUtils';
 
 export default function CashFlowPage() {
     const { data, addTransaction, deleteTransaction, getMonthlyCashFlow } = useFinance();
-    const { formatCurrency } = useSettings();
+    const { formatCurrency, isPrivacyMode } = useSettings();
 
     const [isAddOpen, setIsAddOpen] = useState(false);
     const [formData, setFormData] = useState({
@@ -177,7 +177,7 @@ export default function CashFlowPage() {
                     <CardContent>
                         <div className="text-2xl font-bold text-green-500 flex items-center gap-2">
                             <TrendingUp className="h-5 w-5" />
-                            {formatCurrency(cashFlow.monthlyIncome)}
+                            {isPrivacyMode ? "****" : formatCurrency(cashFlow.monthlyIncome)}
                         </div>
                     </CardContent>
                 </Card>
@@ -188,7 +188,7 @@ export default function CashFlowPage() {
                     <CardContent>
                         <div className="text-2xl font-bold text-red-500 flex items-center gap-2">
                             <TrendingDown className="h-5 w-5" />
-                            {formatCurrency(cashFlow.monthlyExpenses)}
+                            {isPrivacyMode ? "****" : formatCurrency(cashFlow.monthlyExpenses)}
                         </div>
                     </CardContent>
                 </Card>
@@ -199,7 +199,7 @@ export default function CashFlowPage() {
                     <CardContent>
                         <div className={cn("text-2xl font-bold flex items-center gap-2", cashFlow.monthlyIncome - cashFlow.monthlyExpenses >= 0 ? "text-primary" : "text-destructive")}>
                             <Wallet className="h-5 w-5" />
-                            {formatCurrency(cashFlow.monthlyIncome - cashFlow.monthlyExpenses)}
+                            {isPrivacyMode ? "****" : formatCurrency(cashFlow.monthlyIncome - cashFlow.monthlyExpenses)}
                         </div>
                         <p className="text-xs text-muted-foreground mt-1">
                             Savings Rate: {cashFlow.savingsRate.toFixed(1)}%
@@ -242,7 +242,7 @@ export default function CashFlowPage() {
                                         </TableCell>
                                         <TableCell>{t.description || '-'}</TableCell>
                                         <TableCell className={cn("text-right font-medium", t.type === 'income' ? 'text-green-500' : 'text-red-500')}>
-                                            {t.type === 'income' ? '+' : '-'}{formatCurrency(t.amount)}
+                                            {t.type === 'income' ? '+' : '-'}{isPrivacyMode ? "****" : formatCurrency(t.amount)}
                                         </TableCell>
                                         <TableCell>
                                             <Button variant="ghost" size="icon" onClick={() => deleteTransaction(t.id)} className="h-8 w-8 text-muted-foreground hover:text-destructive">

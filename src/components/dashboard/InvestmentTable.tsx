@@ -466,7 +466,7 @@ export function InvestmentTable({ investments, onAdd, onUpdate, onDelete }: Inve
                     </TableCell>
                     <TableCell className="capitalize hidden sm:table-cell">{inv.type.replace('_', ' ')}</TableCell>
                     <TableCell className="hidden md:table-cell">{inv.sector}</TableCell>
-                    <TableCell className="text-right">{inv.quantity}</TableCell>
+                    <TableCell className="text-right">{isPrivacyMode ? "****" : inv.quantity}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex flex-col items-end">
                         {/* Main Value in Base Currency */}
