@@ -186,18 +186,44 @@ export async function searchByIsin(query: string): Promise<{ symbol: string, nam
         const targetUrl = `https://query1.finance.yahoo.com/v1/finance/search?q=${query}&quotesCount=1&newsCount=0`;
 
         const res = await fetch(proxyUrl + encodeURIComponent(targetUrl));
-        if (!res.ok) throw new Error('Yahoo Search failed');
 
-        const data = await res.json();
-        const quote = data.quotes?.[0]; // Best match
+        let quote = null;
+        if (res.ok) {
+            const data = await res.json();
+            quote = data.quotes?.[0];
+        }
 
         if (quote) {
             return {
                 symbol: quote.symbol,
                 name: quote.longname || quote.shortname,
-                isin: quote.isin // Sometimes available in metadata, if not we rely on user input
+                isin: quote.isin
             };
         }
+
+        // --- Fallback: Finnhub ---
+        const finnhubKey = getFinnhubKey();
+        if (finnhubKey) {
+            try {
+                // Finnhub search works for ISINs too (returns symbol)
+                const fhRes = await fetch(`https://finnhub.io/api/v1/search?q=${query}&token=${finnhubKey}`);
+                if (fhRes.ok) {
+                    const fhData = await fhRes.json();
+                    const best = fhData.result?.[0];
+                    if (best) {
+                        return {
+                            symbol: best.symbol,
+                            name: best.description,
+                            // If the query looks like an ISIN (12 chars), pass it back, otherwise undefined
+                            isin: query.length === 12 ? query : undefined
+                        };
+                    }
+                }
+            } catch (e) {
+                console.error('Finnhub fallback search failed', e);
+            }
+        }
+
         return null;
     } catch (error) {
         console.error(`Error searching for ${query}:`, error);

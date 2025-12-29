@@ -262,13 +262,29 @@ export function InvestmentTable({ investments, onAdd, onUpdate, onDelete }: Inve
                       Symbol
                       <HelpTooltip content="The unique ticker (e.g., AAPL, BTC, VWCE)." />
                     </Label>
-                    <Input value={form.symbol} onChange={(e) => setForm({ ...form, symbol: e.target.value.toUpperCase() })} placeholder="AAPL" required />
+                    <Input
+                      value={form.symbol}
+                      onChange={(e) => setForm({ ...form, symbol: e.target.value.toUpperCase() })}
+                      onBlur={() => {
+                        if (form.symbol && (form.type === 'stock' || form.type === 'etf')) {
+                          // Trigger price check on blur
+                          getStockPrice(form.symbol).then(p => {
+                            if (p) toast.info(`Current Market Price: ${formatCurrency(p, form.currency)}`);
+                          });
+                        }
+                      }}
+                      placeholder="AAPL"
+                      required
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label>Name</Label>
                     <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Apple Inc." required />
                   </div>
                 </div>
+
+                {/* Live Price Preview */}
+                {/* We will add a dedicated preview section or toast. Let's add a dedicated section for clarity */}
 
                 {/* Type & Currency */}
                 <div className="grid grid-cols-2 gap-4">
@@ -400,6 +416,15 @@ export function InvestmentTable({ investments, onAdd, onUpdate, onDelete }: Inve
                     />
                     <Label htmlFor="manualPrice">Manually Enter Current Price</Label>
                   </div>
+
+                  {/* LIVE PRICE DISPLAY */}
+                  {!manualPriceEnabled && form.symbol && (
+                    <div className="text-xs text-muted-foreground ml-6 mt-1">
+                      The system will automatically fetch the live price for <span className="font-bold">{form.symbol}</span>.
+                      If incorrect, enable manual entry.
+                    </div>
+                  )}
+
                   {manualPriceEnabled && (
                     <Input
                       type="number"
@@ -419,6 +444,11 @@ export function InvestmentTable({ investments, onAdd, onUpdate, onDelete }: Inve
                     <span className="text-lg font-bold">
                       {new Intl.NumberFormat('en-US', { style: 'currency', currency: form.currency }).format(form.quantity * form.avgBuyPrice)}
                     </span>
+                  </div>
+                  <div className="flex justify-between items-center text-muted-foreground">
+                    <span className="text-xs">Est. Current Value (if live):</span>
+                    {/* We can't show live value easily without state. User Toast is safer. */}
+                    <span className="text-xs italic">calculated on save</span>
                   </div>
                   <p className="text-[10px] text-muted-foreground">
                     Calculated as (Quantity × Avg Price) + Fees. This will be saved as your True Cost Basis.
