@@ -37,7 +37,7 @@ export function CryptoSummary() {
                 </CardHeader>
                 <CardContent>
                     <div className={cn("text-4xl font-bold tracking-tight", isPrivacyMode && "blur-md select-none")}>
-                        {isPrivacyMode ? "$**,***.**" : formatCurrency(summary.totalValue)}
+                        {isPrivacyMode ? "$**,***.**" : formatCurrency(summary.totalValue, 'USD')}
                     </div>
                     <p className="text-xs text-muted-foreground mt-1">
                         Current market value of all holdings
@@ -55,7 +55,7 @@ export function CryptoSummary() {
                 </CardHeader>
                 <CardContent>
                     <div className={cn("text-2xl font-bold", summary.totalGain >= 0 ? "text-success" : "text-destructive", isPrivacyMode && "blur-md select-none text-foreground")}>
-                        {isPrivacyMode ? "+$*,***.**" : `${summary.totalGain >= 0 ? '+' : ''}${formatCurrency(summary.totalGain)}`}
+                        {isPrivacyMode ? "+$*,***.**" : `${summary.totalGain >= 0 ? '+' : ''}${formatCurrency(summary.totalGain, 'USD')}`}
                     </div>
                     <div className={cn("flex items-center text-xs mt-1", summary.totalGain >= 0 ? "text-success" : "text-destructive", isPrivacyMode && "blur-sm opacity-50")}>
                         <span className="font-medium">

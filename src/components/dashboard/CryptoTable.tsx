@@ -432,10 +432,10 @@ export function CryptoTable({ holdings, onAdd, onUpdate, onDelete }: CryptoTable
                       <TableCell className="font-mono font-medium">{h.symbol}</TableCell>
                       <TableCell>{h.name}</TableCell>
                       <TableCell className="text-right font-mono">{h.quantity.toLocaleString('en-US', { maximumFractionDigits: 20 })}</TableCell>
-                      <TableCell className="text-right hidden sm:table-cell">{isPrivacyMode ? "****" : formatCurrency(h.avgBuyPrice)}</TableCell>
+                      <TableCell className="text-right hidden sm:table-cell">{isPrivacyMode ? "****" : formatCurrency(h.avgBuyPrice, 'USD')}</TableCell>
                       <TableCell className="text-right hidden sm:table-cell">
                         <div className="flex flex-col items-end">
-                          <span className={cn(isPrivacyMode && "font-mono")}>{isPrivacyMode ? "****" : formatCurrency(h.currentPrice)}</span>
+                          <span className={cn(isPrivacyMode && "font-mono")}>{isPrivacyMode ? "****" : formatCurrency(h.currentPrice, 'USD')}</span>
                           {h.updatedAt && (
                             <span className="text-[10px] text-muted-foreground">
                               {formatDistanceToNow(new Date(h.updatedAt), { addSuffix: true })}
@@ -443,9 +443,9 @@ export function CryptoTable({ holdings, onAdd, onUpdate, onDelete }: CryptoTable
                           )}
                         </div>
                       </TableCell>
-                      <TableCell className="text-right">{isPrivacyMode ? "****" : formatCurrency(currentValue)}</TableCell>
+                      <TableCell className="text-right">{isPrivacyMode ? "****" : formatCurrency(currentValue, 'USD')}</TableCell>
                       <TableCell className={cn('text-right font-medium', gain >= 0 ? 'text-success' : 'text-destructive')}>
-                        {isPrivacyMode ? "****" : formatCurrency(gain)} ({percent.toFixed(1)}%)
+                        {isPrivacyMode ? "****" : formatCurrency(gain, 'USD')} ({percent.toFixed(1)}%)
                       </TableCell>
                       <TableCell>
                         <div className="flex justify-end gap-1">
