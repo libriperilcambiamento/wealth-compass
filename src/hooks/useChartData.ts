@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useFinance } from '@/contexts/FinanceContext';
 import { format, subMonths, startOfMonth, endOfMonth, isWithinInterval, startOfYear, parseISO, subDays } from 'date-fns';
 
-export type Period = '30d' | '3m' | 'ytd' | 'all';
+export type Period = '7d' | '30d' | '3m' | 'ytd' | 'all';
 
 export function useChartData() {
     const { data, calculateTotals } = useFinance();
@@ -59,6 +59,7 @@ export function useChartData() {
         let start: Date;
 
         switch (period) {
+            case '7d': start = subDays(now, 7); break;
             case '30d': start = subDays(now, 30); break;
             case '3m': start = subMonths(now, 3); break;
             case 'ytd': start = startOfYear(now); break;
@@ -110,9 +111,10 @@ export function useChartData() {
         // Initialize map with 0 for all days in range if period is short enough (30d)
         // skipping full gap fill for 'all' to avoid performance hit on years of data.
 
-        if (period === '30d') {
+        if (period === '30d' || period === '7d') {
             const now = new Date();
-            for (let i = 30; i >= 0; i--) {
+            const daysToSubtract = period === '7d' ? 7 : 30;
+            for (let i = daysToSubtract; i >= 0; i--) {
                 const d = format(subDays(now, i), 'yyyy-MM-dd');
                 grouped[d] = 0;
             }

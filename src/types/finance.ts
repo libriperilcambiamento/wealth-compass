@@ -108,7 +108,7 @@ export interface FinancialData {
   snapshots: NetWorthSnapshot[];
 }
 
-export type TimeRange = '1M' | '6M' | '1Y' | 'ALL';
+export type TimeRange = '1W' | '1M' | '6M' | '1Y' | 'ALL';
 
 export interface ChartDataPoint {
   date: string;

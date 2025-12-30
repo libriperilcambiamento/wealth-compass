@@ -13,7 +13,7 @@ interface NetWorthChartProps {
   currentRange: TimeRange;
 }
 
-const ranges: TimeRange[] = ['1M', '6M', '1Y', 'ALL'];
+const ranges: TimeRange[] = ['1W', '1M', '6M', '1Y', 'ALL'];
 
 export function NetWorthChart({ data, onRangeChange, currentRange }: NetWorthChartProps) {
   const { formatCurrency, isPrivacyMode } = useSettings();

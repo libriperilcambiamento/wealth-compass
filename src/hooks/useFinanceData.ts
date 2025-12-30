@@ -12,7 +12,7 @@ import type {
   ChartDataPoint,
   Transaction,
 } from '@/types/finance';
-import { subMonths, subYears, parseISO, isAfter, format } from 'date-fns';
+import { subMonths, subYears, parseISO, isAfter, format, subDays } from 'date-fns';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
@@ -472,6 +472,7 @@ export function useFinanceData() {
     const now = new Date();
     let cutoff: Date;
     switch (range) {
+      case '1W': cutoff = subDays(now, 7); break;
       case '1M': cutoff = subMonths(now, 1); break;
       case '6M': cutoff = subMonths(now, 6); break;
       case '1Y': cutoff = subYears(now, 1); break;

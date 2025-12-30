@@ -28,6 +28,7 @@ export function CashFlowAnalytics() {
                     <Select value={period} onValueChange={(v: Period) => setPeriod(v)}>
                         <SelectTrigger><SelectValue /></SelectTrigger>
                         <SelectContent>
+                            <SelectItem value="7d">Last 7 Days</SelectItem>
                             <SelectItem value="30d">Last 30 Days</SelectItem>
                             <SelectItem value="3m">Last 3 Months</SelectItem>
                             <SelectItem value="ytd">Year to Date</SelectItem>
