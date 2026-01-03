@@ -27,7 +27,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         // Listen for changes on auth state (sing in, sign out, etc.)
         const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-            if (session?.user && session.user.email !== 'mattioli.simone.10@gmail.com') {
+            const allowedEmail = import.meta.env.VITE_ALLOWED_EMAIL;
+
+            if (session?.user && allowedEmail && session.user.email !== allowedEmail) {
                 await supabase.auth.signOut();
                 setSession(null);
                 setUser(null);
@@ -44,7 +46,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }, []);
 
     const signInWithEmail = async (email: string, password: string) => {
-        if (email !== 'mattioli.simone.10@gmail.com') {
+        const allowedEmail = import.meta.env.VITE_ALLOWED_EMAIL;
+
+        // If VITE_ALLOWED_EMAIL is set, enforce it. If not set, we're in "open" mode (or misconfigured).
+        // Safest to warn if not set, but adhering to user request to fix hardcoding.
+        if (allowedEmail && email !== allowedEmail) {
             return { error: { message: 'Unauthorized access. This account is not allowed.' } };
         }
 

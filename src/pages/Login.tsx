@@ -17,16 +17,38 @@ export default function LoginPage() {
         return <Navigate to="/" replace />;
     }
 
+    const [cooldown, setCooldown] = useState(0);
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (cooldown > 0) return;
+
         setIsLoading(true);
 
         try {
             const { error } = await signInWithEmail(email, password);
-            if (error) throw error;
+            if (error) {
+                // If specific error, show it, otherwise generic
+                if (error.message.includes('Invalid login credentials')) {
+                    throw new Error('Invalid email or password.');
+                }
+                throw error;
+            }
             // Success is handled by auth state change -> redirect
         } catch (error: any) {
             toast.error(error.message || 'Failed to sign in');
+            // Simple exponential backoff or fixed cooldown could work. 
+            // We'll do a simple 3s cooldown to prevent pure button spam.
+            setCooldown(3);
+            const timer = setInterval(() => {
+                setCooldown((prev) => {
+                    if (prev <= 1) {
+                        clearInterval(timer);
+                        return 0;
+                    }
+                    return prev - 1;
+                });
+            }, 1000);
         } finally {
             setIsLoading(false);
         }
@@ -66,14 +88,14 @@ export default function LoginPage() {
                         <Button
                             type="submit"
                             className="w-full gradient-primary"
-                            disabled={isLoading}
+                            disabled={isLoading || cooldown > 0}
                         >
                             {isLoading ? (
                                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                             ) : (
                                 <Mail className="mr-2 h-4 w-4" />
                             )}
-                            Sign in
+                            Sign in {cooldown > 0 && `(${cooldown}s)`}
                         </Button>
                     </form>
                 </CardContent>
