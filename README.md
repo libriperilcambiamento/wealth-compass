@@ -54,5 +54,5 @@ Ready to take control of your finances? Follow the installation guide to set up 
 ---
 
 <p align="center">
-  <span style="color: #666; font-size: 0.8em;">Wealth Compass &copy; 2024</span>
+  <span style="color: #666; font-size: 0.8em;">Wealth Compass &copy; 2026</span>
 </p>
