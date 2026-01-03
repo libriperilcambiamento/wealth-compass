@@ -17,6 +17,7 @@ import { useSettings } from '@/contexts/SettingsContext';
 import { HelpTooltip } from '@/components/ui/tooltip-helper';
 import { Checkbox } from '@/components/ui/checkbox';
 import { DialogDescription } from '@/components/ui/dialog';
+import { DeleteConfirmationDialog } from '@/components/ui/delete-confirmation-dialog';
 
 interface InvestmentTableProps {
   investments: Investment[];
@@ -32,6 +33,14 @@ export function InvestmentTable({ investments, onAdd, onUpdate, onDelete }: Inve
   const [isAdding, setIsAdding] = useState(false);
   const [manualPriceEnabled, setManualPriceEnabled] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+
+  const handleDelete = () => {
+    if (deleteId) {
+      onDelete(deleteId);
+      setDeleteId(null);
+    }
+  };
 
   const [form, setForm] = useState({
     symbol: '',
@@ -513,7 +522,7 @@ export function InvestmentTable({ investments, onAdd, onUpdate, onDelete }: Inve
                     <Button variant="ghost" size="sm" className="h-8" onClick={() => handleEdit(inv)}>
                       <Pencil className="h-3.5 w-3.5 mr-1.5" /> Edit
                     </Button>
-                    <Button variant="ghost" size="sm" className="h-8 text-destructive hover:text-destructive hover:bg-destructive/10" onClick={() => onDelete(inv.id)}>
+                    <Button variant="ghost" size="sm" className="h-8 text-destructive hover:text-destructive hover:bg-destructive/10" onClick={() => setDeleteId(inv.id)}>
                       <Trash2 className="h-3.5 w-3.5 mr-1.5" /> Delete
                     </Button>
                   </div>
@@ -579,7 +588,7 @@ export function InvestmentTable({ investments, onAdd, onUpdate, onDelete }: Inve
                           <Button variant="ghost" size="icon" onClick={() => handleEdit(inv)}>
                             <Pencil className="h-4 w-4 text-muted-foreground" />
                           </Button>
-                          <Button variant="ghost" size="icon" onClick={() => onDelete(inv.id)}>
+                          <Button variant="ghost" size="icon" onClick={() => setDeleteId(inv.id)}>
                             <Trash2 className="h-4 w-4 text-destructive" />
                           </Button>
                         </div>
@@ -593,6 +602,14 @@ export function InvestmentTable({ investments, onAdd, onUpdate, onDelete }: Inve
         )
         }
       </CardContent >
+
+      <DeleteConfirmationDialog
+        open={!!deleteId}
+        onOpenChange={(open) => !open && setDeleteId(null)}
+        onConfirm={handleDelete}
+        title="Delete Investment"
+        description="Are you sure you want to delete this investment? This action cannot be undone."
+      />
     </Card >
   );
 }

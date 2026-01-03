@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/components/ui/dialog';
 import { Plus, Trash2, Wallet } from 'lucide-react';
+import { DeleteConfirmationDialog } from '@/components/ui/delete-confirmation-dialog';
 import type { LiquidityAccount } from '@/types/finance';
 import { useSettings } from '@/contexts/SettingsContext';
 import { cn } from '@/lib/utils';
@@ -26,6 +27,14 @@ export function LiquidityCards({ accounts, onAdd, onUpdate, onDelete }: Liquidit
     balance: 0,
     currency: 'USD',
   });
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+
+  const handleDelete = () => {
+    if (deleteId) {
+      onDelete(deleteId);
+      setDeleteId(null);
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -109,7 +118,7 @@ export function LiquidityCards({ accounts, onAdd, onUpdate, onDelete }: Liquidit
                   variant="ghost"
                   size="icon"
                   className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                  onClick={() => onDelete(a.id)}
+                  onClick={() => setDeleteId(a.id)}
                 >
                   <Trash2 className="h-4 w-4 text-destructive" />
                 </Button>
@@ -129,6 +138,13 @@ export function LiquidityCards({ accounts, onAdd, onUpdate, onDelete }: Liquidit
           </div >
         )}
       </CardContent >
+      <DeleteConfirmationDialog
+        open={!!deleteId}
+        onOpenChange={(open) => !open && setDeleteId(null)}
+        onConfirm={handleDelete}
+        title="Delete Account"
+        description="Are you sure you want to delete this liquidity account? This will remove it and its balance from your net worth."
+      />
     </Card >
   );
 }

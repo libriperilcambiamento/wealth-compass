@@ -16,6 +16,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { toast } from 'sonner';
 import { useSettings } from '@/contexts/SettingsContext';
 import { HelpTooltip } from '@/components/ui/tooltip-helper';
+import { DeleteConfirmationDialog } from '@/components/ui/delete-confirmation-dialog';
 
 interface CryptoTableProps {
   holdings: CryptoHolding[];
@@ -36,6 +37,14 @@ export function CryptoTable({ holdings, onAdd, onUpdate, onDelete }: CryptoTable
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+
+  const handleDelete = () => {
+    if (deleteId) {
+      onDelete(deleteId);
+      setDeleteId(null);
+    }
+  };
 
   const [form, setForm] = useState({
     symbol: '',
@@ -449,7 +458,7 @@ export function CryptoTable({ holdings, onAdd, onUpdate, onDelete }: CryptoTable
                       <Button variant="ghost" size="sm" className="h-8" onClick={() => handleEdit(h)}>
                         <Pencil className="h-3.5 w-3.5 mr-1.5" /> Edit
                       </Button>
-                      <Button variant="ghost" size="sm" className="h-8 text-destructive hover:text-destructive hover:bg-destructive/10" onClick={() => onDelete(h.id)}>
+                      <Button variant="ghost" size="sm" className="h-8 text-destructive hover:text-destructive hover:bg-destructive/10" onClick={() => setDeleteId(h.id)}>
                         <Trash2 className="h-3.5 w-3.5 mr-1.5" /> Delete
                       </Button>
                     </div>
@@ -504,7 +513,7 @@ export function CryptoTable({ holdings, onAdd, onUpdate, onDelete }: CryptoTable
                             <Button variant="ghost" size="icon" onClick={() => handleEdit(h)}>
                               <Pencil className="h-4 w-4 text-muted-foreground" />
                             </Button>
-                            <Button variant="ghost" size="icon" onClick={() => onDelete(h.id)}>
+                            <Button variant="ghost" size="icon" onClick={() => setDeleteId(h.id)}>
                               <Trash2 className="h-4 w-4 text-destructive" />
                             </Button>
                           </div>
@@ -518,6 +527,14 @@ export function CryptoTable({ holdings, onAdd, onUpdate, onDelete }: CryptoTable
           </>
         )}
       </CardContent>
-    </Card>
+
+      <DeleteConfirmationDialog
+        open={!!deleteId}
+        onOpenChange={(open) => !open && setDeleteId(null)}
+        onConfirm={handleDelete}
+        title="Delete Crypto Holding"
+        description="Are you sure you want to delete this crypto holding? This action cannot be undone."
+      />
+    </Card >
   );
 }

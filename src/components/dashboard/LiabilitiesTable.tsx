@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/components/ui/dialog';
 import { Plus, Trash2, CreditCard } from 'lucide-react';
+import { DeleteConfirmationDialog } from '@/components/ui/delete-confirmation-dialog';
 import type { Liability } from '@/types/finance';
 import { useSettings } from '@/contexts/SettingsContext';
 import { cn } from '@/lib/utils';
@@ -31,6 +32,14 @@ export function LiabilitiesTable({ liabilities, onAdd, onUpdate, onDelete }: Lia
     interestRate: 0,
     monthlyPayment: 0,
   });
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+
+  const handleDelete = () => {
+    if (deleteId) {
+      onDelete(deleteId);
+      setDeleteId(null);
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -162,7 +171,7 @@ export function LiabilitiesTable({ liabilities, onAdd, onUpdate, onDelete }: Lia
                   </div>
 
                   <div className="flex justify-end gap-2">
-                    <Button variant="ghost" size="sm" className="h-8 text-destructive hover:text-destructive hover:bg-destructive/10" onClick={() => onDelete(l.id)}>
+                    <Button variant="ghost" size="sm" className="h-8 text-destructive hover:text-destructive hover:bg-destructive/10" onClick={() => setDeleteId(l.id)}>
                       <Trash2 className="h-3.5 w-3.5 mr-1.5" /> Remove
                     </Button>
                   </div>
@@ -203,7 +212,7 @@ export function LiabilitiesTable({ liabilities, onAdd, onUpdate, onDelete }: Lia
                       <TableCell className="text-right hidden sm:table-cell">{l.interestRate}%</TableCell>
                       <TableCell className="text-right">{isPrivacyMode ? "****" : formatCurrency(l.monthlyPayment, l.currency)}</TableCell>
                       <TableCell>
-                        <Button variant="ghost" size="icon" onClick={() => onDelete(l.id)}>
+                        <Button variant="ghost" size="icon" onClick={() => setDeleteId(l.id)}>
                           <Trash2 className="h-4 w-4 text-destructive" />
                         </Button>
                       </TableCell>
@@ -215,6 +224,13 @@ export function LiabilitiesTable({ liabilities, onAdd, onUpdate, onDelete }: Lia
           </>
         )}
       </CardContent>
+      <DeleteConfirmationDialog
+        open={!!deleteId}
+        onOpenChange={(open) => !open && setDeleteId(null)}
+        onConfirm={handleDelete}
+        title="Delete Liability"
+        description="Are you sure you want to remove this liability? This action cannot be undone."
+      />
     </Card >
   );
 }

@@ -16,6 +16,7 @@ import { useFinance } from '@/contexts/FinanceContext';
 import { useSettings } from '@/contexts/SettingsContext';
 import { CashFlowAnalytics } from '@/components/dashboard/CashFlowAnalytics';
 import { exportToCsv } from '@/lib/exportUtils';
+import { DeleteConfirmationDialog } from '@/components/ui/delete-confirmation-dialog';
 
 export default function CashFlowPage() {
     const { data, addTransaction, deleteTransaction, getMonthlyCashFlow } = useFinance();
@@ -29,6 +30,15 @@ export default function CashFlowPage() {
         description: '',
         date: new Date()
     });
+
+    const [deleteId, setDeleteId] = useState<string | null>(null);
+
+    const handleDelete = () => {
+        if (deleteId) {
+            deleteTransaction(deleteId);
+            setDeleteId(null);
+        }
+    };
 
     const cashFlow = getMonthlyCashFlow(new Date());
 
@@ -243,7 +253,7 @@ export default function CashFlowPage() {
                                             <Button
                                                 variant="ghost"
                                                 size="sm"
-                                                onClick={() => deleteTransaction(t.id)}
+                                                onClick={() => setDeleteId(t.id)}
                                                 className="h-8 text-destructive hover:text-destructive hover:bg-destructive/10"
                                             >
                                                 <Trash2 className="h-3.5 w-3.5 mr-1.5" /> Delete
@@ -279,7 +289,7 @@ export default function CashFlowPage() {
                                                     {t.type === 'income' ? '+' : '-'}{isPrivacyMode ? "****" : formatCurrency(t.amount)}
                                                 </TableCell>
                                                 <TableCell>
-                                                    <Button variant="ghost" size="icon" onClick={() => deleteTransaction(t.id)} className="h-8 w-8 text-muted-foreground hover:text-destructive">
+                                                    <Button variant="ghost" size="icon" onClick={() => setDeleteId(t.id)} className="h-8 w-8 text-muted-foreground hover:text-destructive">
                                                         <Trash2 className="h-4 w-4" />
                                                     </Button>
                                                 </TableCell>
@@ -292,6 +302,14 @@ export default function CashFlowPage() {
                     )}
                 </CardContent>
             </Card>
-        </div>
+
+            <DeleteConfirmationDialog
+                open={!!deleteId}
+                onOpenChange={(open) => !open && setDeleteId(null)}
+                onConfirm={handleDelete}
+                title="Delete Transaction"
+                description="Are you sure you want to delete this transaction? This action cannot be undone."
+            />
+        </div >
     );
 }
