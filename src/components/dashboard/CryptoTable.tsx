@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -407,62 +408,114 @@ export function CryptoTable({ holdings, onAdd, onUpdate, onDelete }: CryptoTable
         {holdings.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground">No crypto holdings yet. Add your first one!</div>
         ) : (
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Symbol</TableHead>
-                  <TableHead>Name</TableHead>
-                  <TableHead className="text-right">Quantity</TableHead>
-                  <TableHead className="text-right hidden sm:table-cell">Avg Buy</TableHead>
-                  <TableHead className="text-right hidden sm:table-cell">Current</TableHead>
-                  <TableHead className="text-right">Value</TableHead>
-                  <TableHead className="text-right flex items-center justify-end gap-1">
-                    Gain/Loss
-                    <HelpTooltip content="The theoretical profit or loss you would make if you sold your investments right now at the current market price (Unrealized P&L)." side="left" />
-                  </TableHead>
-                  <TableHead></TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {holdings.map((h) => {
-                  const { currentValue, gain, percent } = getGainLoss(h);
-                  return (
-                    <TableRow key={h.id}>
-                      <TableCell className="font-mono font-medium">{h.symbol}</TableCell>
-                      <TableCell>{h.name}</TableCell>
-                      <TableCell className="text-right font-mono">{h.quantity.toLocaleString('en-US', { maximumFractionDigits: 20 })}</TableCell>
-                      <TableCell className="text-right hidden sm:table-cell">{isPrivacyMode ? "****" : formatCurrency(h.avgBuyPrice, 'USD')}</TableCell>
-                      <TableCell className="text-right hidden sm:table-cell">
-                        <div className="flex flex-col items-end">
-                          <span className={cn(isPrivacyMode && "font-mono")}>{isPrivacyMode ? "****" : formatCurrency(h.currentPrice, 'USD')}</span>
-                          {h.updatedAt && (
-                            <span className="text-[10px] text-muted-foreground">
-                              {formatDistanceToNow(new Date(h.updatedAt), { addSuffix: true })}
-                            </span>
-                          )}
+          <>
+            {/* Mobile View (Cards) */}
+            <div className="md:hidden space-y-4">
+              {holdings.map((h) => {
+                const { currentValue, gain, percent } = getGainLoss(h);
+                return (
+                  <Card key={h.id} className="p-4 bg-card/50 border-input">
+                    <div className="flex justify-between items-start mb-3">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold text-lg">{h.symbol}</span>
+                          <span className="text-xs text-muted-foreground">{h.name}</span>
                         </div>
-                      </TableCell>
-                      <TableCell className="text-right">{isPrivacyMode ? "****" : formatCurrency(currentValue, 'USD')}</TableCell>
-                      <TableCell className={cn('text-right font-medium', gain >= 0 ? 'text-success' : 'text-destructive')}>
-                        {isPrivacyMode ? "****" : formatCurrency(gain, 'USD')} ({percent.toFixed(1)}%)
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex justify-end gap-1">
-                          <Button variant="ghost" size="icon" onClick={() => handleEdit(h)}>
-                            <Pencil className="h-4 w-4 text-muted-foreground" />
-                          </Button>
-                          <Button variant="ghost" size="icon" onClick={() => onDelete(h.id)}>
-                            <Trash2 className="h-4 w-4 text-destructive" />
-                          </Button>
+                      </div>
+                      <div className="text-right">
+                        <div className="font-bold text-base">
+                          {isPrivacyMode ? "****" : formatCurrency(currentValue, 'USD')}
                         </div>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </div>
+                        <div className="text-xs text-muted-foreground">
+                          {isPrivacyMode ? "****" : formatCurrency(h.currentPrice, 'USD')} / unit
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2 text-xs mb-3 p-2 bg-muted/20 rounded-md">
+                      <div>
+                        <span className="text-muted-foreground">Holdings</span>
+                        <div className="font-mono">{isPrivacyMode ? "****" : h.quantity.toLocaleString('en-US', { maximumFractionDigits: 8 })}</div>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground">Gain/Loss</span>
+                        <div className={cn("font-medium", gain >= 0 ? "text-success" : "text-destructive")}>
+                          {isPrivacyMode ? "****" : formatCurrency(gain, 'USD')} ({percent.toFixed(1)}%)
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex justify-end gap-2">
+                      <Button variant="ghost" size="sm" className="h-8" onClick={() => handleEdit(h)}>
+                        <Pencil className="h-3.5 w-3.5 mr-1.5" /> Edit
+                      </Button>
+                      <Button variant="ghost" size="sm" className="h-8 text-destructive hover:text-destructive hover:bg-destructive/10" onClick={() => onDelete(h.id)}>
+                        <Trash2 className="h-3.5 w-3.5 mr-1.5" /> Delete
+                      </Button>
+                    </div>
+                  </Card>
+                );
+              })}
+            </div>
+
+            {/* Desktop View (Table) */}
+            <div className="hidden md:block overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Symbol</TableHead>
+                    <TableHead>Name</TableHead>
+                    <TableHead className="text-right">Quantity</TableHead>
+                    <TableHead className="text-right hidden sm:table-cell">Avg Buy</TableHead>
+                    <TableHead className="text-right hidden sm:table-cell">Current</TableHead>
+                    <TableHead className="text-right">Value</TableHead>
+                    <TableHead className="text-right flex items-center justify-end gap-1">
+                      Gain/Loss
+                      <HelpTooltip content="The theoretical profit or loss you would make if you sold your investments right now at the current market price (Unrealized P&L)." side="left" />
+                    </TableHead>
+                    <TableHead></TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {holdings.map((h) => {
+                    const { currentValue, gain, percent } = getGainLoss(h);
+                    return (
+                      <TableRow key={h.id}>
+                        <TableCell className="font-mono font-medium">{h.symbol}</TableCell>
+                        <TableCell>{h.name}</TableCell>
+                        <TableCell className="text-right font-mono">{h.quantity.toLocaleString('en-US', { maximumFractionDigits: 20 })}</TableCell>
+                        <TableCell className="text-right hidden sm:table-cell">{isPrivacyMode ? "****" : formatCurrency(h.avgBuyPrice, 'USD')}</TableCell>
+                        <TableCell className="text-right hidden sm:table-cell">
+                          <div className="flex flex-col items-end">
+                            <span className={cn(isPrivacyMode && "font-mono")}>{isPrivacyMode ? "****" : formatCurrency(h.currentPrice, 'USD')}</span>
+                            {h.updatedAt && (
+                              <span className="text-[10px] text-muted-foreground">
+                                {formatDistanceToNow(new Date(h.updatedAt), { addSuffix: true })}
+                              </span>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right">{isPrivacyMode ? "****" : formatCurrency(currentValue, 'USD')}</TableCell>
+                        <TableCell className={cn('text-right font-medium', gain >= 0 ? 'text-success' : 'text-destructive')}>
+                          {isPrivacyMode ? "****" : formatCurrency(gain, 'USD')} ({percent.toFixed(1)}%)
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex justify-end gap-1">
+                            <Button variant="ghost" size="icon" onClick={() => handleEdit(h)}>
+                              <Pencil className="h-4 w-4 text-muted-foreground" />
+                            </Button>
+                            <Button variant="ghost" size="icon" onClick={() => onDelete(h.id)}>
+                              <Trash2 className="h-4 w-4 text-destructive" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </div>
+          </>
         )}
       </CardContent>
     </Card>

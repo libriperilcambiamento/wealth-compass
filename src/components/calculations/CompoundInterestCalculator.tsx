@@ -1,5 +1,6 @@
 
 import { useState, useEffect, useMemo } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -19,6 +20,7 @@ import { HelpTooltip } from "@/components/ui/tooltip-helper";
 
 export function CompoundInterestCalculator() {
     const { formatCurrency } = useSettings();
+    const isMobile = useIsMobile();
 
     // State for inputs
     const [initialPrincipal, setInitialPrincipal] = useState(10000);
@@ -165,7 +167,7 @@ export function CompoundInterestCalculator() {
                 <CardHeader>
                     <CardTitle>Growth Projection</CardTitle>
                 </CardHeader>
-                <CardContent className="h-[400px]">
+                <CardContent className="h-[300px] md:h-[400px]">
                     <ResponsiveContainer width="100%" height="100%">
                         <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                             <defs>
@@ -187,6 +189,7 @@ export function CompoundInterestCalculator() {
                                 tickLine={false}
                                 axisLine={false}
                                 fontSize={12}
+                                hide={isMobile}
                             />
                             <Tooltip
                                 contentStyle={{ backgroundColor: '#18181b', border: '1px solid #27272a' }}

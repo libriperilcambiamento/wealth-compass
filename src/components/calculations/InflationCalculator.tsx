@@ -7,10 +7,12 @@ import { HelpTooltip } from '@/components/ui/tooltip-helper';
 import { useSettings } from '@/contexts/SettingsContext';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { cn } from '@/lib/utils';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { TrendingDown, TrendingUp, Info } from 'lucide-react';
 
 export default function InflationCalculator() {
     const { formatCurrency } = useSettings();
+    const isMobile = useIsMobile();
 
     // State for inputs
     const [currentAmount, setCurrentAmount] = useState<number>(10000);
@@ -152,7 +154,7 @@ export default function InflationCalculator() {
             </div>
 
             <div className="lg:col-span-2 space-y-6">
-                <Card className="glass-card border-none shadow-xl h-[500px] flex flex-col">
+                <Card className="glass-card border-none shadow-xl h-[300px] md:h-[500px] flex flex-col">
                     <CardHeader>
                         <CardTitle className="text-xl gradient-text">Purchasing Power Erosion</CardTitle>
                     </CardHeader>
@@ -182,6 +184,7 @@ export default function InflationCalculator() {
                                     tickLine={false}
                                     axisLine={false}
                                     tickFormatter={(value) => `$${value / 1000}k`}
+                                    hide={isMobile}
                                 />
                                 <Tooltip
                                     contentStyle={{ backgroundColor: 'rgba(23, 23, 23, 0.9)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)' }}

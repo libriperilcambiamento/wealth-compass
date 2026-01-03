@@ -16,6 +16,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useFinance } from '@/contexts/FinanceContext';
 import { useSettings } from '@/contexts/SettingsContext';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
 import { PieChart as PieChartIcon, BarChart3 as BarChartIcon } from 'lucide-react';
 
@@ -44,6 +45,7 @@ const getCoinColor = (symbol: string, index: number) => {
 export function CryptoAllocationChart() {
     const { data } = useFinance();
     const { formatCurrency, isPrivacyMode } = useSettings();
+    const isMobile = useIsMobile();
 
     const chartData = useMemo(() => {
         const totalValue = data.crypto.reduce((sum, c) => sum + (c.quantity * c.currentPrice), 0);
@@ -66,7 +68,7 @@ export function CryptoAllocationChart() {
                     Portfolio Allocation
                 </CardTitle>
             </CardHeader>
-            <CardContent className={cn("h-[300px]", isPrivacyMode && "blur-sm select-none pointer-events-none")}>
+            <CardContent className={cn("h-[250px] md:h-[300px]", isPrivacyMode && "blur-sm select-none pointer-events-none")}>
                 {chartData.length === 0 ? (
                     <div className="h-full flex items-center justify-center text-muted-foreground text-sm">
                         No assets found
@@ -78,8 +80,8 @@ export function CryptoAllocationChart() {
                                 data={chartData}
                                 cx="50%"
                                 cy="50%"
-                                innerRadius={60}
-                                outerRadius={80}
+                                innerRadius={isMobile ? 50 : 60}
+                                outerRadius={isMobile ? 70 : 80}
                                 paddingAngle={5}
                                 dataKey="value"
                             >
@@ -92,7 +94,12 @@ export function CryptoAllocationChart() {
                                 contentStyle={{ backgroundColor: "#18181b", borderColor: "#27272a", color: "#FFFFFF" }}
                                 itemStyle={{ color: "#FFFFFF" }}
                             />
-                            <Legend verticalAlign="bottom" height={36} />
+                            <Legend
+                                verticalAlign={isMobile ? "bottom" : "middle"}
+                                align={isMobile ? "center" : "right"}
+                                layout={isMobile ? "horizontal" : "vertical"}
+                                height={36}
+                            />
                         </PieChart>
                     </ResponsiveContainer>
                 )}
@@ -104,6 +111,7 @@ export function CryptoAllocationChart() {
 export function CryptoPerformanceChart() {
     const { data } = useFinance();
     const { formatCurrency, isPrivacyMode, currencySymbol } = useSettings();
+    const isMobile = useIsMobile();
 
     const chartData = useMemo(() => {
         return data.crypto
@@ -131,7 +139,7 @@ export function CryptoPerformanceChart() {
                     Net Profit / Loss
                 </CardTitle>
             </CardHeader>
-            <CardContent className={cn("h-[300px]", isPrivacyMode && "blur-sm select-none pointer-events-none")}>
+            <CardContent className={cn("h-[250px] md:h-[300px]", isPrivacyMode && "blur-sm select-none pointer-events-none")}>
                 {chartData.length === 0 ? (
                     <div className="h-full flex items-center justify-center text-muted-foreground text-sm">
                         No assets found
@@ -143,7 +151,7 @@ export function CryptoPerformanceChart() {
                             <ReferenceLine y={0} stroke="#4b5563" />
                             <XAxis dataKey="name" fontSize={12} tickLine={false} axisLine={false} />
                             <YAxis
-                                hide={isPrivacyMode}
+                                hide={isPrivacyMode || isMobile}
                                 fontSize={12}
                                 tickLine={false}
                                 axisLine={false}

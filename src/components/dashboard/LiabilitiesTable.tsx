@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -122,47 +123,95 @@ export function LiabilitiesTable({ liabilities, onAdd, onUpdate, onDelete }: Lia
         {liabilities.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground">No liabilities. Great job staying debt-free!</div>
         ) : (
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead className="hidden sm:table-cell">Type</TableHead>
-                  <TableHead className="text-right">Principal</TableHead>
-                  <TableHead className="text-right">Balance</TableHead>
-                  <TableHead className="text-right hidden sm:table-cell">Rate</TableHead>
-                  <TableHead className="text-right">Monthly</TableHead>
-                  <TableHead></TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {liabilities.map((l) => (
-                  <TableRow key={l.id}>
-                    <TableCell className="font-medium">{l.name}</TableCell>
-                    <TableCell className="capitalize hidden sm:table-cell">{l.type.replace('_', ' ')}</TableCell>
-                    <TableCell className="text-right">{isPrivacyMode ? "****" : formatCurrency(l.principal, l.currency)}</TableCell>
-                    <TableCell className="text-right text-destructive">
-                      <div className="flex flex-col items-end">
-                        <span>{isPrivacyMode ? "****" : formatCurrency(l.currentBalance, l.currency)}</span>
-                        {l.currency && l.currency !== baseCurrency && (
-                          <span className="text-[10px] text-muted-foreground">
-                            {new Intl.NumberFormat('en-US', { style: 'currency', currency: l.currency }).format(l.currentBalance)}
-                          </span>
-                        )}
+          <>
+            {/* Mobile View (Cards) */}
+            <div className="md:hidden space-y-4">
+              {liabilities.map((l) => (
+                <Card key={l.id} className="p-4 bg-card/50 border-input">
+                  <div className="flex justify-between items-start mb-3">
+                    <div>
+                      <div className="font-bold text-lg">{l.name}</div>
+                      <Badge variant="secondary" className="text-[10px] h-5 px-1.5 uppercase mt-1">
+                        {l.type.replace('_', ' ')}
+                      </Badge>
+                    </div>
+                    <div className="text-right">
+                      <div className="font-bold text-base text-destructive">
+                        {isPrivacyMode ? "****" : formatCurrency(l.currentBalance, l.currency)}
                       </div>
-                    </TableCell>
-                    <TableCell className="text-right hidden sm:table-cell">{l.interestRate}%</TableCell>
-                    <TableCell className="text-right">{isPrivacyMode ? "****" : formatCurrency(l.monthlyPayment, l.currency)}</TableCell>
-                    <TableCell>
-                      <Button variant="ghost" size="icon" onClick={() => onDelete(l.id)}>
-                        <Trash2 className="h-4 w-4 text-destructive" />
-                      </Button>
-                    </TableCell>
+                      {l.currency && l.currency !== baseCurrency && (
+                        <div className="text-[10px] text-muted-foreground">
+                          {new Intl.NumberFormat('en-US', { style: 'currency', currency: l.currency }).format(l.currentBalance)}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 text-xs mb-3 p-2 bg-muted/20 rounded-md">
+                    <div>
+                      <span className="text-muted-foreground">Monthly Payment</span>
+                      <div className="font-medium">{isPrivacyMode ? "****" : formatCurrency(l.monthlyPayment, l.currency)}</div>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">Props / Rate</span>
+                      <div className="font-medium">
+                        {isPrivacyMode ? "****" : formatCurrency(l.principal, l.currency)} @ {l.interestRate}%
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end gap-2">
+                    <Button variant="ghost" size="sm" className="h-8 text-destructive hover:text-destructive hover:bg-destructive/10" onClick={() => onDelete(l.id)}>
+                      <Trash2 className="h-3.5 w-3.5 mr-1.5" /> Remove
+                    </Button>
+                  </div>
+                </Card>
+              ))}
+            </div>
+
+            {/* Desktop View (Table) */}
+            <div className="hidden md:block overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Name</TableHead>
+                    <TableHead className="hidden sm:table-cell">Type</TableHead>
+                    <TableHead className="text-right">Principal</TableHead>
+                    <TableHead className="text-right">Balance</TableHead>
+                    <TableHead className="text-right hidden sm:table-cell">Rate</TableHead>
+                    <TableHead className="text-right">Monthly</TableHead>
+                    <TableHead></TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+                </TableHeader>
+                <TableBody>
+                  {liabilities.map((l) => (
+                    <TableRow key={l.id}>
+                      <TableCell className="font-medium">{l.name}</TableCell>
+                      <TableCell className="capitalize hidden sm:table-cell">{l.type.replace('_', ' ')}</TableCell>
+                      <TableCell className="text-right">{isPrivacyMode ? "****" : formatCurrency(l.principal, l.currency)}</TableCell>
+                      <TableCell className="text-right text-destructive">
+                        <div className="flex flex-col items-end">
+                          <span>{isPrivacyMode ? "****" : formatCurrency(l.currentBalance, l.currency)}</span>
+                          {l.currency && l.currency !== baseCurrency && (
+                            <span className="text-[10px] text-muted-foreground">
+                              {new Intl.NumberFormat('en-US', { style: 'currency', currency: l.currency }).format(l.currentBalance)}
+                            </span>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-right hidden sm:table-cell">{l.interestRate}%</TableCell>
+                      <TableCell className="text-right">{isPrivacyMode ? "****" : formatCurrency(l.monthlyPayment, l.currency)}</TableCell>
+                      <TableCell>
+                        <Button variant="ghost" size="icon" onClick={() => onDelete(l.id)}>
+                          <Trash2 className="h-4 w-4 text-destructive" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </>
         )}
       </CardContent>
     </Card >

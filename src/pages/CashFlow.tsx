@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { format } from 'date-fns';
 import { Plus, Trash2, TrendingUp, TrendingDown, Wallet, CalendarIcon, FileSpreadsheet } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -57,19 +58,19 @@ export default function CashFlowPage() {
     };
 
     return (
-        <div className="min-h-screen bg-background dark p-6 space-y-8">
-            <div className="flex items-center justify-between">
+        <div className="min-h-screen bg-background dark p-4 md:p-6 space-y-8">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-3xl font-bold text-gradient">Cash Flow</h1>
                     <p className="text-muted-foreground">Track your income and expenses</p>
                 </div>
-                <div className="flex gap-2">
-                    <Button variant="outline" onClick={handleExportCsv}>
+                <div className="flex gap-2 w-full md:w-auto">
+                    <Button variant="outline" onClick={handleExportCsv} className="flex-1 md:flex-none">
                         <FileSpreadsheet className="h-4 w-4 mr-2" /> Export CSV
                     </Button>
                     <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
                         <DialogTrigger asChild>
-                            <Button className="gradient-primary">
+                            <Button className="gradient-primary flex-1 md:flex-none">
                                 <Plus className="h-4 w-4 mr-2" /> Add Transaction
                             </Button>
                         </DialogTrigger>
@@ -214,46 +215,81 @@ export default function CashFlowPage() {
                     <CardTitle>Recent Transactions</CardTitle>
                 </CardHeader>
                 <CardContent className={cn(isPrivacyMode && "blur-sm select-none pointer-events-none")}>
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>Date</TableHead>
-                                <TableHead>Category</TableHead>
-                                <TableHead>Description</TableHead>
-                                <TableHead className="text-right">Amount</TableHead>
-                                <TableHead className="w-[50px]"></TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {data.transactions.length === 0 ? (
-                                <TableRow>
-                                    <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
-                                        No transactions found. Add one to get started.
-                                    </TableCell>
-                                </TableRow>
-                            ) : (
-                                data.transactions.map((t) => (
-                                    <TableRow key={t.id}>
-                                        <TableCell>{format(new Date(t.date), 'MMM dd, yyyy')}</TableCell>
-                                        <TableCell>
-                                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-secondary">
-                                                {t.category}
-                                            </span>
-                                        </TableCell>
-                                        <TableCell>{t.description || '-'}</TableCell>
-                                        <TableCell className={cn("text-right font-medium", t.type === 'income' ? 'text-green-500' : 'text-red-500')}>
-                                            {t.type === 'income' ? '+' : '-'}{isPrivacyMode ? "****" : formatCurrency(t.amount)}
-                                        </TableCell>
-                                        <TableCell>
-                                            <Button variant="ghost" size="icon" onClick={() => deleteTransaction(t.id)} className="h-8 w-8 text-muted-foreground hover:text-destructive">
-                                                <Trash2 className="h-4 w-4" />
+                    {data.transactions.length === 0 ? (
+                        <div className="text-center text-muted-foreground py-8">
+                            No transactions found. Add one to get started.
+                        </div>
+                    ) : (
+                        <>
+                            {/* Mobile View (Cards) */}
+                            <div className="md:hidden space-y-4">
+                                {data.transactions.map((t) => (
+                                    <Card key={t.id} className="p-4 bg-card/50 border-input">
+                                        <div className="flex justify-between items-start mb-2">
+                                            <div className="space-y-1">
+                                                <div className="flex items-center gap-2">
+                                                    <span className="font-bold text-base">{format(new Date(t.date), 'MMM dd, yyyy')}</span>
+                                                    <Badge variant="secondary" className="text-[10px] h-5 px-1.5 font-normal">
+                                                        {t.category}
+                                                    </Badge>
+                                                </div>
+                                                <div className="text-sm text-muted-foreground">{t.description || '-'}</div>
+                                            </div>
+                                            <div className={cn("font-bold text-base", t.type === 'income' ? 'text-green-500' : 'text-red-500')}>
+                                                {t.type === 'income' ? '+' : '-'}{isPrivacyMode ? "****" : formatCurrency(t.amount)}
+                                            </div>
+                                        </div>
+                                        <div className="flex justify-end pt-2 border-t border-border/50">
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                onClick={() => deleteTransaction(t.id)}
+                                                className="h-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+                                            >
+                                                <Trash2 className="h-3.5 w-3.5 mr-1.5" /> Delete
                                             </Button>
-                                        </TableCell>
-                                    </TableRow>
-                                ))
-                            )}
-                        </TableBody>
-                    </Table>
+                                        </div>
+                                    </Card>
+                                ))}
+                            </div>
+
+                            {/* Desktop View (Table) */}
+                            <div className="hidden md:block overflow-x-auto">
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead>Date</TableHead>
+                                            <TableHead>Category</TableHead>
+                                            <TableHead>Description</TableHead>
+                                            <TableHead className="text-right">Amount</TableHead>
+                                            <TableHead className="w-[50px]"></TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {data.transactions.map((t) => (
+                                            <TableRow key={t.id}>
+                                                <TableCell>{format(new Date(t.date), 'MMM dd, yyyy')}</TableCell>
+                                                <TableCell>
+                                                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-secondary">
+                                                        {t.category}
+                                                    </span>
+                                                </TableCell>
+                                                <TableCell>{t.description || '-'}</TableCell>
+                                                <TableCell className={cn("text-right font-medium", t.type === 'income' ? 'text-green-500' : 'text-red-500')}>
+                                                    {t.type === 'income' ? '+' : '-'}{isPrivacyMode ? "****" : formatCurrency(t.amount)}
+                                                </TableCell>
+                                                <TableCell>
+                                                    <Button variant="ghost" size="icon" onClick={() => deleteTransaction(t.id)} className="h-8 w-8 text-muted-foreground hover:text-destructive">
+                                                        <Trash2 className="h-4 w-4" />
+                                                    </Button>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </div>
+                        </>
+                    )}
                 </CardContent>
             </Card>
         </div>

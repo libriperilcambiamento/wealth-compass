@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -470,73 +471,125 @@ export function InvestmentTable({ investments, onAdd, onUpdate, onDelete }: Inve
         {investments.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground">No investments yet.</div>
         ) : (
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Symbol</TableHead>
-                  <TableHead>Name</TableHead>
-                  <TableHead className="hidden sm:table-cell">Type</TableHead>
-                  <TableHead className="hidden md:table-cell">Sector</TableHead>
-                  <TableHead className="text-right">Quantity</TableHead>
-                  <TableHead className="text-right flex items-center justify-end gap-1">
-                    Value
-                    <HelpTooltip content="Current market value of this investment." side="left" />
-                  </TableHead>
-                  <TableHead></TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {investments.map((inv) => (
-                  <TableRow key={inv.id}>
-                    <TableCell className="font-mono font-medium">{inv.symbol}</TableCell>
-                    <TableCell>
-                      <div className="flex flex-col">
-                        <span>{inv.name}</span>
-                        {inv.isin && <span className="text-[10px] text-muted-foreground">{inv.isin}</span>}
+          <>
+            {/* Mobile View (Cards) */}
+            <div className="md:hidden space-y-4">
+              {investments.map((inv) => (
+                <Card key={inv.id} className="p-4 bg-card/50 border-input">
+                  <div className="flex justify-between items-start mb-3">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-lg">{inv.symbol}</span>
+                        <Badge variant="secondary" className="text-[10px] h-5 px-1.5 uppercase">
+                          {inv.type.replace('_', ' ')}
+                        </Badge>
                       </div>
-                    </TableCell>
-                    <TableCell className="capitalize hidden sm:table-cell">{inv.type.replace('_', ' ')}</TableCell>
-                    <TableCell className="hidden md:table-cell">{inv.sector}</TableCell>
-                    <TableCell className="text-right">{isPrivacyMode ? "****" : inv.quantity}</TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex flex-col items-end">
-                        {/* Main Value in Base Currency */}
-                        {/* Logic: IF (asset.currency === base_currency) THEN Direct math (No Conversion). ELSE -> Convert. */}
-                        {/* formatCurrency handles this check internally. */}
-                        <span className="font-medium">
-                          {isPrivacyMode ? "****" : formatCurrency(inv.currentValue, inv.currency)}
-                        </span>
+                      <div className="text-xs text-muted-foreground line-clamp-1">{inv.name}</div>
+                    </div>
+                    <div className="text-right">
+                      <div className="font-bold text-base">
+                        {isPrivacyMode ? "****" : formatCurrency(inv.currentValue, inv.currency)}
+                      </div>
+                      {inv.updatedAt && (
+                        <div className="text-[10px] text-muted-foreground">
+                          {formatDistanceToNow(new Date(inv.updatedAt))} ago
+                        </div>
+                      )}
+                    </div>
+                  </div>
 
-                        {/* Secondary Value in Original Currency (if different) */}
-                        {inv.currency && inv.currency !== baseCurrency && (
-                          <span className="text-xs text-muted-foreground">
-                            {isPrivacyMode ? "****" : new Intl.NumberFormat('en-US', { style: 'currency', currency: inv.currency }).format(inv.currentValue)}
-                          </span>
-                        )}
+                  <div className="grid grid-cols-2 gap-2 text-xs mb-3 p-2 bg-muted/20 rounded-md">
+                    <div>
+                      <span className="text-muted-foreground">Quantity</span>
+                      <div className="font-medium">{isPrivacyMode ? "****" : inv.quantity}</div>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">Sector</span>
+                      <div className="font-medium">{inv.sector}</div>
+                    </div>
+                  </div>
 
-                        {inv.updatedAt && (
-                          <span className="text-[10px] text-muted-foreground">
-                            {formatDistanceToNow(new Date(inv.updatedAt), { addSuffix: true })}
-                          </span>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex justify-end gap-1">
-                        <Button variant="ghost" size="icon" onClick={() => handleEdit(inv)}>
-                          <Pencil className="h-4 w-4 text-muted-foreground" />
-                        </Button>
-                        <Button variant="ghost" size="icon" onClick={() => onDelete(inv.id)}>
-                          <Trash2 className="h-4 w-4 text-destructive" />
-                        </Button>
-                      </div>
-                    </TableCell>
+                  <div className="flex justify-end gap-2">
+                    <Button variant="ghost" size="sm" className="h-8" onClick={() => handleEdit(inv)}>
+                      <Pencil className="h-3.5 w-3.5 mr-1.5" /> Edit
+                    </Button>
+                    <Button variant="ghost" size="sm" className="h-8 text-destructive hover:text-destructive hover:bg-destructive/10" onClick={() => onDelete(inv.id)}>
+                      <Trash2 className="h-3.5 w-3.5 mr-1.5" /> Delete
+                    </Button>
+                  </div>
+                </Card>
+              ))}
+            </div>
+
+            {/* Desktop View (Table) */}
+            <div className="hidden md:block overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Symbol</TableHead>
+                    <TableHead>Name</TableHead>
+                    <TableHead className="hidden sm:table-cell">Type</TableHead>
+                    <TableHead className="hidden md:table-cell">Sector</TableHead>
+                    <TableHead className="text-right">Quantity</TableHead>
+                    <TableHead className="text-right flex items-center justify-end gap-1">
+                      Value
+                      <HelpTooltip content="Current market value of this investment." side="left" />
+                    </TableHead>
+                    <TableHead></TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+                </TableHeader>
+                <TableBody>
+                  {investments.map((inv) => (
+                    <TableRow key={inv.id}>
+                      <TableCell className="font-mono font-medium">{inv.symbol}</TableCell>
+                      <TableCell>
+                        <div className="flex flex-col">
+                          <span>{inv.name}</span>
+                          {inv.isin && <span className="text-[10px] text-muted-foreground">{inv.isin}</span>}
+                        </div>
+                      </TableCell>
+                      <TableCell className="capitalize hidden sm:table-cell">{inv.type.replace('_', ' ')}</TableCell>
+                      <TableCell className="hidden md:table-cell">{inv.sector}</TableCell>
+                      <TableCell className="text-right">{isPrivacyMode ? "****" : inv.quantity}</TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex flex-col items-end">
+                          {/* Main Value in Base Currency */}
+                          {/* Logic: IF (asset.currency === base_currency) THEN Direct math (No Conversion). ELSE -> Convert. */}
+                          {/* formatCurrency handles this check internally. */}
+                          <span className="font-medium">
+                            {isPrivacyMode ? "****" : formatCurrency(inv.currentValue, inv.currency)}
+                          </span>
+
+                          {/* Secondary Value in Original Currency (if different) */}
+                          {inv.currency && inv.currency !== baseCurrency && (
+                            <span className="text-xs text-muted-foreground">
+                              {isPrivacyMode ? "****" : new Intl.NumberFormat('en-US', { style: 'currency', currency: inv.currency }).format(inv.currentValue)}
+                            </span>
+                          )}
+
+                          {inv.updatedAt && (
+                            <span className="text-[10px] text-muted-foreground">
+                              {formatDistanceToNow(new Date(inv.updatedAt), { addSuffix: true })}
+                            </span>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex justify-end gap-1">
+                          <Button variant="ghost" size="icon" onClick={() => handleEdit(inv)}>
+                            <Pencil className="h-4 w-4 text-muted-foreground" />
+                          </Button>
+                          <Button variant="ghost" size="icon" onClick={() => onDelete(inv.id)}>
+                            <Trash2 className="h-4 w-4 text-destructive" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </>
         )
         }
       </CardContent >

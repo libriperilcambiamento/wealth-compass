@@ -39,7 +39,7 @@ export default function SettingsPage() {
     };
 
     return (
-        <div className="min-h-screen bg-background dark p-6">
+        <div className="min-h-screen bg-background dark p-4 md:p-6">
             <div className="max-w-3xl mx-auto space-y-8">
 
                 {/* Header */}

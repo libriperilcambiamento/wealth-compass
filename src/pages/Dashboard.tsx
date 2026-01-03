@@ -15,6 +15,7 @@ import { CashFlowTrendChart, AssetAllocationChart } from '@/components/dashboard
 import { toast } from 'sonner';
 import type { TimeRange } from '@/types/finance';
 import { useSettings } from '@/contexts/SettingsContext';
+import { getBatchCryptoPrices, getStockPrice } from '@/lib/api';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -99,9 +100,9 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-background dark">
-      <div className="max-w-7xl mx-auto p-6 space-y-8">
+      <div className="max-w-7xl mx-auto p-4 md:p-6 space-y-8">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold text-gradient">Dashboard</h1>
             <div className="flex items-center gap-2">
@@ -109,16 +110,17 @@ const Dashboard = () => {
               {lastUpdated && <span className="text-xs text-muted-foreground bg-muted/30 px-2 py-1 rounded-md">Updated {lastUpdated.toLocaleTimeString()}</span>}
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 w-full md:w-auto">
             <Button
               variant="outline"
               onClick={handleGlobalRefresh}
               disabled={isRefreshing}
+              className="flex-1 md:flex-none"
             >
               {isRefreshing ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <RefreshCw className="h-4 w-4 mr-2" />}
               Refresh
             </Button>
-            <Button onClick={() => finance.takeSnapshot(convertCurrency)} className="gradient-primary">
+            <Button onClick={() => finance.takeSnapshot(convertCurrency)} className="gradient-primary flex-1 md:flex-none">
               <Camera className="h-4 w-4 mr-2" /> Snapshot
             </Button>
           </div>

@@ -8,9 +8,11 @@ import { useSettings } from '@/contexts/SettingsContext';
 import { ComposedChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, ReferenceLine } from 'recharts';
 import { Flame, TrendingUp, Target, DollarSign, Wallet } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 export default function FIRECalculator() {
     const { formatCurrency, currencySymbol } = useSettings();
+    const isMobile = useIsMobile();
 
     // Inputs
     const [currentAge, setCurrentAge] = useState<number>(() => {
@@ -246,7 +248,7 @@ export default function FIRECalculator() {
                 </div>
 
                 {/* Chart */}
-                <Card className="glass-card border-none shadow-xl h-[500px] flex flex-col">
+                <Card className="glass-card border-none shadow-xl h-[300px] md:h-[500px] flex flex-col">
                     <CardHeader>
                         <CardTitle className="text-xl gradient-text">Path to Financial Independence</CardTitle>
                     </CardHeader>
@@ -268,6 +270,7 @@ export default function FIRECalculator() {
                                     tickLine={false}
                                     axisLine={false}
                                     tickFormatter={(value) => `${currencySymbol}${value / 1000}k`}
+                                    hide={isMobile}
                                 />
                                 <Tooltip
                                     contentStyle={{ backgroundColor: 'rgba(23, 23, 23, 0.9)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)' }}

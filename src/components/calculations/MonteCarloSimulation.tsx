@@ -1,5 +1,6 @@
 
 import { useState, useMemo, useCallback } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -21,6 +22,7 @@ import { HelpTooltip } from "@/components/ui/tooltip-helper";
 
 export function MonteCarloSimulation() {
     const { formatCurrency } = useSettings();
+    const isMobile = useIsMobile();
 
     // Inputs
     const [initialPortfolio, setInitialPortfolio] = useState(10000);
@@ -237,7 +239,7 @@ export function MonteCarloSimulation() {
                 <CardHeader>
                     <CardTitle>Projected Outcomes</CardTitle>
                 </CardHeader>
-                <CardContent className="h-[500px] flex flex-col">
+                <CardContent className="h-[300px] md:h-[500px] flex flex-col">
                     <div className="grid grid-cols-3 gap-2 mb-4 text-center">
                         <div className="p-2 rounded bg-red-500/10 border border-red-500/20">
                             <p className="text-xs text-muted-foreground">Conservative (10th)</p>
@@ -283,6 +285,7 @@ export function MonteCarloSimulation() {
                                     tickLine={false}
                                     axisLine={false}
                                     fontSize={12}
+                                    hide={isMobile}
                                 />
                                 <Tooltip
                                     contentStyle={{ backgroundColor: '#18181b', border: '1px solid #27272a' }}

@@ -30,15 +30,17 @@ export default function InvestmentsPage() {
     };
 
     return (
-        <div className="min-h-screen bg-background dark p-6 space-y-8">
-            <div className="flex justify-between items-center">
+        <div className="min-h-screen bg-background dark p-4 md:p-6 space-y-8">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-3xl font-bold text-gradient">Investments</h1>
                     <p className={cn("text-muted-foreground", isPrivacyMode && "blur-sm select-none")}>Manage your stock and ETF portfolio</p>
                 </div>
-                <Button variant="outline" onClick={handleExportCsv} className={cn(isPrivacyMode && "blur-sm select-none pointer-events-none")}>
-                    <FileSpreadsheet className="h-4 w-4 mr-2" /> Export CSV
-                </Button>
+                <div className="w-full md:w-auto">
+                    <Button variant="outline" onClick={handleExportCsv} className={cn("w-full md:w-auto", isPrivacyMode && "blur-sm select-none pointer-events-none")}>
+                        <FileSpreadsheet className="h-4 w-4 mr-2" /> Export CSV
+                    </Button>
+                </div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

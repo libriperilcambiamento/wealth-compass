@@ -134,7 +134,7 @@ export function IncomeExpenseModule({
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="text-success font-medium">{isPrivacyMode ? "****" : formatCurrency(i.amount)}</span>
-                    <Button variant="ghost" size="icon" className="h-6 w-6 opacity-0 group-hover:opacity-100" onClick={() => onDeleteIncome(i.id)}>
+                    <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => onDeleteIncome(i.id)}>
                       <Trash2 className="h-3 w-3 text-destructive" />
                     </Button>
                   </div>
@@ -202,7 +202,7 @@ export function IncomeExpenseModule({
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="text-destructive font-medium">{isPrivacyMode ? "****" : formatCurrency(e.amount)}</span>
-                    <Button variant="ghost" size="icon" className="h-6 w-6 opacity-0 group-hover:opacity-100" onClick={() => onDeleteExpense(e.id)}>
+                    <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => onDeleteExpense(e.id)}>
                       <Trash2 className="h-3 w-3 text-destructive" />
                     </Button>
                   </div>

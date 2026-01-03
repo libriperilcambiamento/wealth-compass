@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useChartData, Period } from '@/hooks/useChartData';
 import { useSettings } from '@/contexts/SettingsContext';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
 
 const COLORS = ['#10B981', '#3B82F6', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899', '#6366F1'];
@@ -16,6 +17,7 @@ export function CashFlowAnalytics() {
     const [period, setPeriod] = useState<Period>('30d');
     const { getExpensesByCategory, getSpendingTimeline } = useChartData();
     const { formatCurrency, isPrivacyMode } = useSettings();
+    const isMobile = useIsMobile();
 
     const expenseData = getExpensesByCategory(period);
     const timelineData = getSpendingTimeline(period);
@@ -44,7 +46,7 @@ export function CashFlowAnalytics() {
                     <CardHeader>
                         <CardTitle>Expense Structure</CardTitle>
                     </CardHeader>
-                    <CardContent className={cn("h-[300px]", isPrivacyMode && "blur-sm select-none pointer-events-none")}>
+                    <CardContent className={cn("h-[250px] md:h-[300px]", isPrivacyMode && "blur-sm select-none pointer-events-none")}>
                         {expenseData.data.length === 0 ? (
                             <div className="h-full flex items-center justify-center text-muted-foreground">No expenses for this period</div>
                         ) : (
@@ -54,8 +56,8 @@ export function CashFlowAnalytics() {
                                         data={expenseData.data}
                                         cx="50%"
                                         cy="50%"
-                                        innerRadius={60}
-                                        outerRadius={80}
+                                        innerRadius={isMobile ? 50 : 60}
+                                        outerRadius={isMobile ? 70 : 80}
                                         paddingAngle={2}
                                         dataKey="value"
                                     >
@@ -74,7 +76,11 @@ export function CashFlowAnalytics() {
                                         labelStyle={{ color: "#f8fafc" }}
                                         formatter={(value: number) => [isPrivacyMode ? "****" : formatCurrency(value), 'Amount']}
                                     />
-                                    <Legend layout="vertical" align="right" verticalAlign="middle" />
+                                    <Legend
+                                        layout={isMobile ? "horizontal" : "vertical"}
+                                        align={isMobile ? "center" : "right"}
+                                        verticalAlign={isMobile ? "bottom" : "middle"}
+                                    />
                                 </PieChart>
                             </ResponsiveContainer>
                         )}
@@ -86,7 +92,7 @@ export function CashFlowAnalytics() {
                     <CardHeader>
                         <CardTitle>Spending Timeline</CardTitle>
                     </CardHeader>
-                    <CardContent className={cn("h-[300px]", isPrivacyMode && "blur-sm select-none pointer-events-none")}>
+                    <CardContent className={cn("h-[250px] md:h-[300px]", isPrivacyMode && "blur-sm select-none pointer-events-none")}>
                         {timelineData.length === 0 ? (
                             <div className="h-full flex items-center justify-center text-muted-foreground">No activity for this period</div>
                         ) : (
@@ -100,7 +106,7 @@ export function CashFlowAnalytics() {
                                     </defs>
                                     <CartesianGrid strokeDasharray="3 3" opacity={0.1} vertical={false} />
                                     <XAxis dataKey="displayDate" fontSize={12} tickLine={false} axisLine={false} minTickGap={30} />
-                                    <YAxis hide={isPrivacyMode} fontSize={12} tickLine={false} axisLine={false} tickFormatter={(val) => `€${val}`} />
+                                    <YAxis hide={isPrivacyMode || isMobile} fontSize={12} tickLine={false} axisLine={false} tickFormatter={(val) => `€${val}`} />
                                     <Tooltip
                                         formatter={(value: number) => isPrivacyMode ? "****" : formatCurrency(value)}
                                         labelFormatter={(date) => new Date(date).toLocaleDateString()}

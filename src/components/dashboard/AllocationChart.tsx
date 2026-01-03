@@ -4,6 +4,7 @@ import { HelpTooltip } from '@/components/ui/tooltip-helper';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 import type { Investment } from '@/types/finance';
 import { useSettings } from '@/contexts/SettingsContext';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
 
 interface AllocationChartProps {
@@ -21,6 +22,7 @@ const COLORS = [
 
 export function AllocationChart({ investments, groupBy }: AllocationChartProps) {
   const { formatCurrency, isPrivacyMode } = useSettings();
+  const isMobile = useIsMobile();
 
   const grouped = investments.reduce((acc, inv) => {
     const key = inv[groupBy];
@@ -49,14 +51,14 @@ export function AllocationChart({ investments, groupBy }: AllocationChartProps) 
           </div>
         ) : (
           <div>
-            <ResponsiveContainer width="100%" height={250}>
+            <ResponsiveContainer width="100%" height={isMobile ? 250 : 250}>
               <PieChart>
                 <Pie
                   data={data}
                   cx="50%"
                   cy="50%"
-                  innerRadius={60}
-                  outerRadius={80}
+                  innerRadius={isMobile ? 50 : 60}
+                  outerRadius={isMobile ? 70 : 80}
                   paddingAngle={2}
                   dataKey="value"
                 >
@@ -77,6 +79,9 @@ export function AllocationChart({ investments, groupBy }: AllocationChartProps) 
                 />
                 <Legend
                   formatter={(value) => <span className="text-foreground text-sm">{value}</span>}
+                  layout={isMobile ? 'horizontal' : 'vertical'}
+                  verticalAlign={isMobile ? 'bottom' : 'middle'}
+                  align={isMobile ? 'center' : 'right'}
                 />
               </PieChart>
             </ResponsiveContainer>

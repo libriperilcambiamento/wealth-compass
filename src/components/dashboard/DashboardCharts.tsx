@@ -14,12 +14,14 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useChartData } from '@/hooks/useChartData';
 import { useSettings } from '@/contexts/SettingsContext';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
 
 // --- Cash Flow Trend (Bar) ---
 export function CashFlowTrendChart() {
     const { getCashFlowTrend } = useChartData();
     const { formatCurrency, isPrivacyMode, currencySymbol } = useSettings();
+    const isMobile = useIsMobile();
     const data = getCashFlowTrend(6); // Last 6 months
 
     return (
@@ -27,13 +29,13 @@ export function CashFlowTrendChart() {
             <CardHeader>
                 <CardTitle>Cash Flow Trend (6 Months)</CardTitle>
             </CardHeader>
-            <CardContent className="h-[300px]">
+            <CardContent className="h-[250px] md:h-[300px]">
                 <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={data}>
                         <CartesianGrid strokeDasharray="3 3" opacity={0.1} vertical={false} />
                         <XAxis dataKey="name" fontSize={12} tickLine={false} axisLine={false} />
                         <YAxis
-                            hide={isPrivacyMode}
+                            hide={isPrivacyMode || isMobile}
                             fontSize={12}
                             tickLine={false}
                             axisLine={false}
@@ -65,7 +67,7 @@ export function AssetAllocationChart() {
             <CardHeader>
                 <CardTitle>Asset Allocation</CardTitle>
             </CardHeader>
-            <CardContent className={cn("h-[300px]", isPrivacyMode && "blur-sm select-none pointer-events-none")}>
+            <CardContent className={cn("h-[250px] md:h-[300px]", isPrivacyMode && "blur-sm select-none pointer-events-none")}>
                 {data.length === 0 ? (
                     <div className="h-full flex items-center justify-center text-muted-foreground text-sm">
                         No assets found
