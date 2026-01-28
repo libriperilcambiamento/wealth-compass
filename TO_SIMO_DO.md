@@ -18,3 +18,6 @@ This document tracks manual actions and considerations for you to address.
 - [ ] **Net Worth Page**: Verify "Net Worth Chart" is an Area chart with emerald gradient.
 - [ ] **Analytics Page**: Verify "Cash Flow Analytics" has a Donut expense chart and Area spending timeline.
 - [ ] **FIRE Calculator**: Verify "Net Worth Projection" has a green gradient area and clear dashed benchmark lines.
+- [ ] **Mobile**: Verify "Expense Structure" chart is fully visible and not cut off on mobile screens.
+- [ ] **Mobile**: Verify **Investments Page** shows "Allocation" chart at the TOP, followed by the table.
+- [ ] **Investments Page**: Verify "Allocation" chart no longer has a double box/border.

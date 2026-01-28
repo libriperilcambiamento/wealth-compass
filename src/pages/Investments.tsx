@@ -43,7 +43,7 @@ export default function InvestmentsPage() {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="flex flex-col-reverse gap-6 lg:grid lg:grid-cols-3">
                 {/* Main List */}
                 <div className="lg:col-span-2 space-y-6">
                     <InvestmentTable
@@ -56,14 +56,7 @@ export default function InvestmentsPage() {
 
                 {/* Sidebar / Stats */}
                 <div className="space-y-6">
-                    <Card className="glass-card">
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-2"><PieChart className="h-4 w-4" /> Allocation</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <AllocationChart investments={finance.data.investments} groupBy="sector" />
-                        </CardContent>
-                    </Card>
+                    <AllocationChart investments={finance.data.investments} groupBy="sector" />
                 </div>
             </div>
         </div>

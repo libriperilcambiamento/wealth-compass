@@ -116,3 +116,27 @@ A comprehensive update to all chart components to adhere to a modern, profession
 - **Typography**: Tailwind's `font-mono` for numbers, `text-white/90` for headings.
 - **Gradients**: SVG `<linearGradient>` used for Area fills.
 - **Responsiveness**: `ResponsiveContainer` used everywhere; mobile-specific radius and layouts handled via `useIsMobile`.
+
+# Expense Structure Chart Mobile Fix
+
+## Overview
+Fixed a layout issue where the "Expense Structure" chart was cut off on mobile devices.
+
+## Changes
+1.  **CashFlowAnalytics.tsx**
+    -   This allows the stacked content (Chart + List) to expand naturally on smaller screens without being clipped.
+
+# Investments Page Mobile Reordering
+
+## Overview
+Reordered the layout on the Investments page for mobile devices to prioritize visual data.
+
+## Changes
+1.  **Investments.tsx**
+    -   Changed main container from `grid` to `flex flex-col-reverse` on mobile.
+    -   **Mobile**: The "Allocation" chart (originally second in DOM) now appears **ABOVE** the Investment Table.
+    -   **Desktop**: Retained `lg:grid lg:grid-cols-3` to keep the original side-by-side layout (Table Left, Chart Right).
+
+## Visual Refinement
+- Removed redundant `Card` wrapper around `AllocationChart` in `Investments.tsx`.
+- The chart component itself provides its own Card styling, so the outer wrapper was causing a double-border effect.

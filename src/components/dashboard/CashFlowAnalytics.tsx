@@ -89,7 +89,7 @@ export function CashFlowAnalytics() {
                             Expense Structure
                         </CardTitle>
                     </CardHeader>
-                    <CardContent className="h-[300px]">
+                    <CardContent className="h-auto md:h-[300px]">
                         {sortedExpenseData.length === 0 ? (
                             <div className="h-full flex items-center justify-center text-muted-foreground text-sm">No expenses for this period</div>
                         ) : (
