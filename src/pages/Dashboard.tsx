@@ -11,7 +11,7 @@ import { LiabilitiesTable } from '@/components/dashboard/LiabilitiesTable';
 import { LiquidityCards } from '@/components/dashboard/LiquidityCards';
 import { IncomeExpenseModule } from '@/components/dashboard/IncomeExpenseModule';
 import { RecentActivity } from '@/components/dashboard/RecentActivity';
-import { CashFlowTrendChart, AssetAllocationChart } from '@/components/dashboard/DashboardCharts';
+import { CashFlowTrendChart, AssetAllocationChart, ExpensesBreakdownChart } from '@/components/dashboard/DashboardCharts';
 import { toast } from 'sonner';
 import type { TimeRange } from '@/types/finance';
 import { useSettings } from '@/contexts/SettingsContext';
@@ -163,15 +163,18 @@ const Dashboard = () => {
 
             {/* 2. Cash Flow Trend (New) */}
             <CashFlowTrendChart />
+
+            {/* 3. Top Expenses (New) */}
+            <ExpensesBreakdownChart />
           </div>
 
           {/* Side Column */}
           <div className="space-y-6">
-            {/* 3. Asset Allocation (Updated) */}
-            <AssetAllocationChart />
-
-            {/* 4. Recent Activity */}
+            {/* 3. Recent Activity */}
             <RecentActivity />
+
+            {/* 4. Asset Allocation (Updated) */}
+            <AssetAllocationChart />
           </div>
         </div>
       </div>

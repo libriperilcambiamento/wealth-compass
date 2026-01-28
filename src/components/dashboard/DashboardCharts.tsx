@@ -30,14 +30,14 @@ export function CashFlowTrendChart() {
     const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
     return (
-        <Card className="glass-card border-none bg-black/40 backdrop-blur-xl ring-1 ring-white/5 h-full">
+        <Card className="glass-card border-none bg-black/40 backdrop-blur-xl ring-1 ring-white/5">
             <CardHeader>
                 <CardTitle className="text-lg font-semibold flex items-center gap-2 text-white/90">
                     <TrendingUp className="h-5 w-5 text-emerald-400" />
                     Cash Flow Trend (6 Months)
                 </CardTitle>
             </CardHeader>
-            <CardContent className="h-[250px] md:h-[300px]">
+            <CardContent className="h-[200px] md:h-[250px]">
                 <ResponsiveContainer width="100%" height="100%">
                     <BarChart
                         data={data}
@@ -118,6 +118,101 @@ export function CashFlowTrendChart() {
     );
 }
 
+// --- Top Expenses (Horizontal Bar) ---
+export function ExpensesBreakdownChart() {
+    const { getExpensesByCategory } = useChartData();
+    const { formatCurrency, isPrivacyMode, currencySymbol } = useSettings();
+    const isMobile = useIsMobile();
+    const [activeIndex, setActiveIndex] = useState<number | null>(null);
+
+    // Get last 30 days expenses
+    const { data } = getExpensesByCategory('30d');
+    const topExpenses = data.slice(0, 5); // Top 5
+
+    return (
+        <Card className="glass-card border-none bg-black/40 backdrop-blur-xl ring-1 ring-white/5">
+            <CardHeader className="pb-2">
+                <CardTitle className="text-lg font-semibold flex items-center gap-2 text-white/90">
+                    <TrendingUp className="h-5 w-5 text-rose-400" />
+                    Top Expenses (30d)
+                </CardTitle>
+            </CardHeader>
+            <CardContent className="h-[250px]">
+                {topExpenses.length === 0 ? (
+                    <div className="h-full flex items-center justify-center text-muted-foreground text-sm">
+                        No expenses found
+                    </div>
+                ) : (
+                    <ResponsiveContainer width="100%" height="100%">
+                        <BarChart
+                            layout="vertical"
+                            data={topExpenses}
+                            margin={{ top: 5, right: 30, left: 10, bottom: 5 }}
+                            barSize={20}
+                            onMouseMove={(state) => {
+                                if (state.isTooltipActive) {
+                                    setActiveIndex(state.activeTooltipIndex ?? null);
+                                } else {
+                                    setActiveIndex(null);
+                                }
+                            }}
+                            onMouseLeave={() => setActiveIndex(null)}
+                        >
+                            <CartesianGrid strokeDasharray="3 3" opacity={0.05} horizontal={false} stroke="#ffffff" />
+                            <XAxis type="number" hide />
+                            <YAxis
+                                dataKey="name"
+                                type="category"
+                                width={100}
+                                tick={{ fill: '#e5e7eb', fontSize: 12 }}
+                                tickLine={false}
+                                axisLine={false}
+                            />
+                            <Tooltip
+                                cursor={{ fill: 'rgba(255,255,255,0.03)', radius: 4 }}
+                                content={({ active, payload }) => {
+                                    if (active && payload && payload.length) {
+                                        const data = payload[0].payload;
+                                        return (
+                                            <div className="bg-black/80 backdrop-blur-xl border border-white/10 p-3 rounded-xl shadow-xl">
+                                                <div className="flex items-center gap-2 mb-1">
+                                                    <div className="w-2 h-2 rounded-full bg-rose-500" />
+                                                    <span className="font-bold text-white">{data.name}</span>
+                                                </div>
+                                                <div className="text-white/90 font-mono">
+                                                    {isPrivacyMode ? "****" : formatCurrency(data.value)}
+                                                </div>
+                                                <div className="text-white/50 text-xs">
+                                                    {data.percentage.toFixed(1)}% of total
+                                                </div>
+                                            </div>
+                                        );
+                                    }
+                                    return null;
+                                }}
+                            />
+                            <Bar
+                                dataKey="value"
+                                radius={[0, 4, 4, 0]}
+                                animationDuration={1000}
+                            >
+                                {topExpenses.map((entry, index) => (
+                                    <Cell
+                                        key={`cell-${index}`}
+                                        fill={activeIndex === index ? '#f43f5e' : '#e11d48'} // Rose-500 / Rose-600
+                                        className="transition-all duration-300"
+                                        fillOpacity={activeIndex === index ? 1 : 0.8}
+                                    />
+                                ))}
+                            </Bar>
+                        </BarChart>
+                    </ResponsiveContainer>
+                )}
+            </CardContent>
+        </Card>
+    );
+}
+
 // --- Asset Allocation (Donut) ---
 export function AssetAllocationChart() {
     const { getAssetAllocation } = useChartData();
@@ -156,7 +251,7 @@ export function AssetAllocationChart() {
     };
 
     return (
-        <Card className="glass-card border-none bg-black/40 backdrop-blur-xl ring-1 ring-white/5 h-full">
+        <Card className="glass-card border-none bg-black/40 backdrop-blur-xl ring-1 ring-white/5">
             <CardHeader>
                 <CardTitle className="text-lg font-semibold flex items-center gap-2 text-white/90">
                     <PieChartIcon className="h-5 w-5 text-indigo-400" />
@@ -169,7 +264,7 @@ export function AssetAllocationChart() {
                         No assets found
                     </div>
                 ) : (
-                    <div className="flex flex-col items-center gap-6 h-full">
+                    <div className="flex flex-col items-center gap-6">
                         {/* Donut Chart */}
                         <div className="relative w-full h-[260px] flex-shrink-0">
                             <ResponsiveContainer width="100%" height="100%">
