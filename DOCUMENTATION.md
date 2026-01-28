@@ -140,3 +140,26 @@ Reordered the layout on the Investments page for mobile devices to prioritize vi
 ## Visual Refinement
 - Removed redundant `Card` wrapper around `AllocationChart` in `Investments.tsx`.
 - The chart component itself provides its own Card styling, so the outer wrapper was causing a double-border effect.
+
+# Website & App Integration (Dual Access)
+
+## Overview
+Implemented a dual-access architecture where the public promotional website and the private financial software coexist within the same deployment but are logically separated.
+
+## Architecture
+1.  **Public Website**:
+    -   Served at the root path `/`.
+    -   Contains Landing Page, Features, FAQ, etc.
+    -   No visible navigation links to the private software to maintain "hidden" access.
+
+2.  **Private Software**:
+    -   Served under the `/sw` prefix (e.g., `/sw/dashboard`).
+    -   **Login Page**: Moved to `/sw/login`.
+    -   **Protected Routes**: All app pages (`dashboard`, `cash-flow`, etc.) are protected and prefixed with `/sw`.
+
+## Implementation Details
+-   **Routing (`App.tsx`)**: Refactored `Routes` to define a public group (WebsiteLayout) and a private group (`/sw` path).
+-   **Sidebar**: Updated all navigation links to use the `/sw` prefix.
+-   **Auth Redirection**:
+    -   `Login.tsx`: Redirects successful logins to `/sw/dashboard`.
+    -   `ProtectedRoute.tsx`: Redirects unauthenticated users to `/sw/login`.

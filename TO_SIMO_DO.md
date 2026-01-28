@@ -21,3 +21,8 @@ This document tracks manual actions and considerations for you to address.
 - [ ] **Mobile**: Verify "Expense Structure" chart is fully visible and not cut off on mobile screens.
 - [ ] **Mobile**: Verify **Investments Page** shows "Allocation" chart at the TOP, followed by the table.
 - [ ] **Investments Page**: Verify "Allocation" chart no longer has a double box/border.
+
+# Deployment Verification
+- [ ] Verify the Website at `https://libriperilcambiamento.github.io/wealth-compass/` (Should see Landing Page).
+- [ ] Verify the login at `https://libriperilcambiamento.github.io/wealth-compass/sw/login` (Should see Login).
+- [ ] Verify Dashboard access `https://libriperilcambiamento.github.io/wealth-compass/sw/dashboard` (After login).

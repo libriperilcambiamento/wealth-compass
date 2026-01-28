@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Github, Linkedin, MapPin, Heart, Code, Mountain } from 'lucide-react';
+import { Github, Linkedin, MapPin, Heart, Code, Mountain, Globe } from 'lucide-react';
 
 export const Founder = () => {
     return (
@@ -11,15 +11,18 @@ export const Founder = () => {
                     className="bg-white/5 border border-white/10 rounded-3xl p-8 md:p-12 backdrop-blur-sm"
                 >
                     <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
-                        {/* Profile Image Mockup with Initials if no image */}
-                        <div className="w-40 h-40 rounded-full bg-gradient-to-br from-emerald-500 to-cyan-400 flex items-center justify-center text-4xl font-bold text-white shadow-2xl shrink-0">
-                            SM
+                        <div className="w-40 h-40 rounded-full overflow-hidden shadow-2xl shrink-0 border-4 border-emerald-500/20">
+                            <img
+                                src={`${import.meta.env.BASE_URL}images/founder.png`}
+                                alt="Simone Mattioli"
+                                className="w-full h-full object-cover"
+                            />
                         </div>
 
                         <div className="text-center md:text-left space-y-4">
                             <h1 className="text-4xl font-bold text-white">Simone Mattioli</h1>
                             <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 text-gray-400">
-                                <span className="flex items-center gap-1"><Code className="h-4 w-4" /> Full Stack Developer</span>
+                                <span className="flex items-center gap-1"><Code className="h-4 w-4" /> Builder</span>
                                 <span className="flex items-center gap-1"><MapPin className="h-4 w-4" /> Verona, Italy</span>
                             </div>
 
@@ -34,6 +37,9 @@ export const Founder = () => {
                                 </a>
                                 <a href="https://www.linkedin.com/in/simonemattioli2003/" target="_blank" rel="noopener noreferrer" className="p-3 rounded-full bg-white/10 hover:bg-white/20 hover:text-emerald-400 transition-colors">
                                     <Linkedin className="h-6 w-6" />
+                                </a>
+                                <a href="https://simo-hue.github.io" target="_blank" rel="noopener noreferrer" className="p-3 rounded-full bg-white/10 hover:bg-white/20 hover:text-emerald-400 transition-colors">
+                                    <Globe className="h-6 w-6" />
                                 </a>
                             </div>
                         </div>
