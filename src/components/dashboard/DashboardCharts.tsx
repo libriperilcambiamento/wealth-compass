@@ -258,7 +258,7 @@ export function AssetAllocationChart() {
                     Asset Allocation
                 </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="flex-1 flex flex-col justify-center">
                 {data.length === 0 ? (
                     <div className="h-[300px] flex items-center justify-center text-muted-foreground text-sm">
                         No assets found

@@ -16,7 +16,7 @@ export function RecentActivity() {
         .slice(0, 5);
 
     return (
-        <Card className="glass-card">
+        <Card className="glass-card flex-1 flex flex-col">
             <CardHeader>
                 <CardTitle>Recent Activity</CardTitle>
             </CardHeader>

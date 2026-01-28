@@ -10,7 +10,8 @@ This document tracks manual actions and considerations for you to address.
 # Chart Verification
 - [ ] **Dashboard**: Verify "Cash Flow Trend" is not stretched vertically (should be ~250px height).
 - [ ] **Dashboard**: Verify "**Top Expenses (30d)**" chart is visible below Cash Flow Trend and shows correct categories.
-- [ ] **Dashboard**: Verify "**Recent Activity**" is now **ABOVE** "Asset Allocation" in the right column.
+- [ ] **Dashboard**: Verify "**Top Expenses (30d)**" chart is visible below Cash Flow Trend and shows correct categories.
+- [ ] **Dashboard**: Verify "**Recent Activity**" and "**Asset Allocation**" share the full height of the right column and align with the bottom of the left column.
 - [ ] **Crypto**: Verify "Portfolio Allocation" chart has the **legend BELOW** the donut chart.
 - [ ] **Dashboard**: Verify "Asset Allocation" chart has the **legend BELOW** the donut chart (not on the side).
 - [ ] **Allocation Page**: Verify "Allocation Chart" is a Donut chart with legend BELOW.

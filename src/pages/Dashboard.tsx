@@ -169,7 +169,7 @@ const Dashboard = () => {
           </div>
 
           {/* Side Column */}
-          <div className="space-y-6">
+          <div className="flex flex-col gap-6 h-full">
             {/* 3. Recent Activity */}
             <RecentActivity />
 
