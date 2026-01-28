@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Slider } from '@/components/ui/slider';
 import { HelpTooltip } from '@/components/ui/tooltip-helper';
 import { useSettings } from '@/contexts/SettingsContext';
-import { ComposedChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, ReferenceLine } from 'recharts';
+import { ComposedChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, ReferenceLine, Area } from 'recharts';
 import { Flame, TrendingUp, Target, DollarSign, Wallet } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -248,14 +248,23 @@ export default function FIRECalculator() {
                 </div>
 
                 {/* Chart */}
-                <Card className="glass-card border-none shadow-xl h-[300px] md:h-[500px] flex flex-col">
+                <Card className="glass-card border-none bg-black/40 backdrop-blur-xl ring-1 ring-white/5 h-[300px] md:h-[500px] flex flex-col">
                     <CardHeader>
-                        <CardTitle className="text-xl gradient-text">Path to Financial Independence</CardTitle>
+                        <CardTitle className="text-xl gradient-text flex items-center gap-2">
+                            <TrendingUp className="h-5 w-5 text-emerald-400" />
+                            Path to Financial Independence
+                        </CardTitle>
                     </CardHeader>
                     <CardContent className="flex-1 min-h-0">
                         <ResponsiveContainer width="100%" height="100%">
                             <ComposedChart data={chartData} margin={{ top: 30, right: 20, left: 20, bottom: 5 }}>
-                                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" vertical={false} />
+                                <defs>
+                                    <linearGradient id="colorNetWorthFire" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor="#22c55e" stopOpacity={0.2} />
+                                        <stop offset="95%" stopColor="#22c55e" stopOpacity={0} />
+                                    </linearGradient>
+                                </defs>
+                                <CartesianGrid strokeDasharray="3 3" opacity={0.05} vertical={false} stroke="#ffffff" />
                                 <XAxis
                                     dataKey="age"
                                     stroke="#9ca3af"
@@ -264,6 +273,7 @@ export default function FIRECalculator() {
                                     label={{ value: 'Age', position: 'insideBottomRight', offset: -5, fill: '#9ca3af' }}
                                     type="number"
                                     domain={['dataMin', 'dataMax']}
+                                    dy={10}
                                 />
                                 <YAxis
                                     stroke="#9ca3af"
@@ -271,11 +281,53 @@ export default function FIRECalculator() {
                                     axisLine={false}
                                     tickFormatter={(value) => `${currencySymbol}${value / 1000}k`}
                                     hide={isMobile}
+                                    tick={{ fill: '#9ca3af' }}
                                 />
                                 <Tooltip
-                                    contentStyle={{ backgroundColor: 'rgba(23, 23, 23, 0.9)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)' }}
-                                    formatter={(value: number, name: string) => [formatCurrency(value), name]}
-                                    labelFormatter={(age) => `Age ${age}`}
+                                    cursor={{ stroke: '#22c55e', strokeWidth: 1, strokeDasharray: '3 3' }}
+                                    content={({ active, payload, label }) => {
+                                        if (active && payload && payload.length) {
+                                            const data = payload[0].payload;
+                                            return (
+                                                <div className="bg-black/80 backdrop-blur-xl border border-white/10 p-4 rounded-xl shadow-xl min-w-[200px]">
+                                                    <div className="text-white/50 text-xs mb-2 font-medium">
+                                                        Age {label}
+                                                    </div>
+                                                    <div className="space-y-2">
+                                                        <div className="flex justify-between items-center gap-4">
+                                                            <div className="flex items-center gap-2">
+                                                                <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                                                                <span className="text-white/80 text-sm">Net Worth</span>
+                                                            </div>
+                                                            <span className="font-mono font-bold text-emerald-400">
+                                                                {isPrivacyMode ? "****" : formatCurrency(data.netWorth)}
+                                                            </span>
+                                                        </div>
+                                                        <div className="h-px bg-white/10 my-2" />
+                                                        <div className="flex justify-between items-center gap-4">
+                                                            <span className="text-white/50 text-xs">FIRE Target</span>
+                                                            <span className="font-mono text-xs text-orange-400">
+                                                                {isPrivacyMode ? "****" : formatCurrency(data.fireTarget)}
+                                                            </span>
+                                                        </div>
+                                                        <div className="flex justify-between items-center gap-4">
+                                                            <span className="text-white/50 text-xs">Lean FIRE</span>
+                                                            <span className="font-mono text-xs text-rose-400">
+                                                                {isPrivacyMode ? "****" : formatCurrency(data.leanFire)}
+                                                            </span>
+                                                        </div>
+                                                        <div className="flex justify-between items-center gap-4">
+                                                            <span className="text-white/50 text-xs">Fat FIRE</span>
+                                                            <span className="font-mono text-xs text-purple-400">
+                                                                {isPrivacyMode ? "****" : formatCurrency(data.fatFire)}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            );
+                                        }
+                                        return null;
+                                    }}
                                 />
                                 <Legend wrapperStyle={{ paddingTop: '20px' }} />
 
@@ -283,45 +335,24 @@ export default function FIRECalculator() {
                                     <ReferenceLine x={reachFireAge} stroke="#22c55e" strokeDasharray="3 3" label={{ position: 'top', value: `FIRE Age: ${reachFireAge}`, fill: '#22c55e', fontSize: 12, dy: -10 }} />
                                 )}
 
-                                {/* Labels for the lines (using invisible ReferenceLines) */}
-                                <ReferenceLine y={fireNumber} stroke="none" label={{ position: 'insideRight', value: 'FIRE', fill: '#f97316', fontSize: 12, dy: -12, fontWeight: 'bold' }} />
-                                <ReferenceLine y={fatFireNumber} stroke="none" label={{ position: 'insideRight', value: 'Fat FIRE', fill: '#a855f7', fontSize: 12, dy: -12, fontWeight: 'bold' }} />
-                                <ReferenceLine y={leanFireNumber} stroke="none" label={{ position: 'insideRight', value: 'Lean FIRE', fill: '#ef4444', fontSize: 12, dy: -12, fontWeight: 'bold' }} />
+                                {/* Reference Lines for Targets */}
+                                <ReferenceLine y={fireNumber} stroke="#f97316" strokeDasharray="3 3" opacity={0.5} strokeWidth={1} label={{ position: 'insideRight', value: 'FIRE', fill: '#f97316', fontSize: 10, dy: -10 }} />
+                                <ReferenceLine y={fatFireNumber} stroke="#a855f7" strokeDasharray="3 3" opacity={0.3} strokeWidth={1} />
+                                <ReferenceLine y={leanFireNumber} stroke="#ef4444" strokeDasharray="3 3" opacity={0.3} strokeWidth={1} />
 
-                                <Line
-                                    type="monotone"
-                                    dataKey="fatFire"
-                                    name="Fat FIRE"
-                                    stroke="#a855f7"
-                                    strokeDasharray="3 3"
-                                    strokeWidth={2}
-                                    dot={false}
-                                />
-                                <Line
-                                    type="monotone"
-                                    dataKey="fireTarget"
-                                    name="FIRE"
-                                    stroke="#f97316"
-                                    strokeDasharray="3 3"
-                                    strokeWidth={2}
-                                    dot={false}
-                                />
-                                <Line
-                                    type="monotone"
-                                    dataKey="leanFire"
-                                    name="Lean FIRE"
-                                    stroke="#ef4444"
-                                    strokeDasharray="3 3"
-                                    strokeWidth={2}
-                                    dot={false}
-                                />
-                                <Line
+                                {/* Hidden lines for tooltip data, we visualize them differently or just keep them minimal */}
+                                <Line type="monotone" dataKey="fatFire" name="Fat FIRE" stroke="#a855f7" strokeWidth={0} dot={false} activeDot={false} legendType="none" />
+                                <Line type="monotone" dataKey="fireTarget" name="FIRE" stroke="#f97316" strokeWidth={0} dot={false} activeDot={false} legendType="none" />
+                                <Line type="monotone" dataKey="leanFire" name="Lean FIRE" stroke="#ef4444" strokeWidth={0} dot={false} activeDot={false} legendType="none" />
+
+                                <Area
                                     type="monotone"
                                     dataKey="netWorth"
                                     name="Projected Net Worth"
                                     stroke="#22c55e"
                                     strokeWidth={3}
-                                    dot={false}
+                                    fill="url(#colorNetWorthFire)"
+                                    fillOpacity={1}
                                 />
                             </ComposedChart>
                         </ResponsiveContainer>

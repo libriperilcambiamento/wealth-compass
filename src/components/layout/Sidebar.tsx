@@ -49,7 +49,11 @@ const sidebarItems = [
     },
 ];
 
-export function Sidebar() {
+interface SidebarProps {
+    onNavigate?: () => void;
+}
+
+export function Sidebar({ onNavigate }: SidebarProps) {
     const location = useLocation();
     const { signOut } = useAuth();
     const { isPrivacyMode, togglePrivacyMode } = useSettings();
@@ -67,7 +71,7 @@ export function Sidebar() {
 
             <div className="flex-1 px-4 space-y-2">
                 {sidebarItems.map((item) => (
-                    <Link key={item.href} to={item.href}>
+                    <Link key={item.href} to={item.href} onClick={onNavigate}>
                         <Button
                             variant={location.pathname === item.href ? "secondary" : "ghost"}
                             className={cn(

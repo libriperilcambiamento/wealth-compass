@@ -1,11 +1,13 @@
 
+import { useState, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { HelpTooltip } from '@/components/ui/tooltip-helper';
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, Sector } from 'recharts';
 import type { Investment } from '@/types/finance';
 import { useSettings } from '@/contexts/SettingsContext';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
+import { PieChart as PieChartIcon } from 'lucide-react';
 
 interface AllocationChartProps {
   investments: Investment[];
@@ -13,78 +15,142 @@ interface AllocationChartProps {
 }
 
 const COLORS = [
-  'hsl(var(--chart-1))',
-  'hsl(var(--chart-2))',
-  'hsl(var(--chart-3))',
-  'hsl(var(--chart-4))',
-  'hsl(var(--chart-5))',
+  '#3b82f6', // Blue
+  '#10b981', // Emerald
+  '#f59e0b', // Amber
+  '#ef4444', // Red
+  '#8b5cf6', // Violet
+  '#ec4899', // Pink
+  '#06b6d4', // Cyan
+  '#84cc16', // Lime
 ];
 
 export function AllocationChart({ investments, groupBy }: AllocationChartProps) {
-  const { formatCurrency, isPrivacyMode } = useSettings();
+  const { formatCurrency, isPrivacyMode, convertCurrency } = useSettings();
   const isMobile = useIsMobile();
+  const [activeIndex, setActiveIndex] = useState(0);
 
-  const grouped = investments.reduce((acc, inv) => {
-    const key = inv[groupBy];
-    acc[key] = (acc[key] || 0) + inv.currentValue;
-    return acc;
-  }, {} as Record<string, number>);
+  const data = useMemo(() => {
+    const grouped = investments.reduce((acc, inv) => {
+      const key = inv[groupBy];
+      const value = convertCurrency(inv.currentValue, inv.currency);
+      acc[key] = (acc[key] || 0) + value;
+      return acc;
+    }, {} as Record<string, number>);
 
-  const data = Object.entries(grouped).map(([name, value]) => ({ name, value }));
+    return Object.entries(grouped)
+      .map(([name, value]) => ({ name, value }))
+      .sort((a, b) => b.value - a.value);
+  }, [investments, groupBy, convertCurrency]);
 
+  const totalValue = useMemo(() => {
+    return data.reduce((sum, item) => sum + item.value, 0);
+  }, [data]);
 
-
-  const totalValue = data.reduce((sum, item) => sum + item.value, 0);
+  // Custom Active Shape
+  const renderActiveShape = (props: any) => {
+    const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill } = props;
+    return (
+      <g>
+        <text x={cx} y={cy} dy={-10} textAnchor="middle" fill="#9ca3af" fontSize={12} className="font-medium">
+          Total Value
+        </text>
+        <text x={cx} y={cy} dy={20} textAnchor="middle" fill="#FFFFFF" fontSize={isMobile ? 18 : 22} className="font-bold">
+          {isPrivacyMode ? "****" : formatCurrency(totalValue)}
+        </text>
+        <Sector
+          cx={cx}
+          cy={cy}
+          innerRadius={innerRadius}
+          outerRadius={outerRadius + 6}
+          startAngle={startAngle}
+          endAngle={endAngle}
+          fill={fill}
+          cornerRadius={6}
+        />
+      </g>
+    );
+  };
 
   return (
-    <Card className="glass-card">
+    <Card className="glass-card border-none bg-black/40 backdrop-blur-xl ring-1 ring-white/5 h-full">
       <CardHeader>
-        <CardTitle className="text-lg font-semibold capitalize flex items-center gap-2">
+        <CardTitle className="text-lg font-semibold capitalize flex items-center gap-2 text-white/90">
+          <PieChartIcon className="h-5 w-5 text-indigo-400" />
           Allocation by {groupBy}
-          <HelpTooltip content="How your money is divided among different categories (Stocks, Crypto, Cash) to manage risk." />
+          <HelpTooltip content="How your money is divided among different categories." />
         </CardTitle>
       </CardHeader>
-      <CardContent className={cn(isPrivacyMode && "blur-sm select-none pointer-events-none")}>
+      <CardContent>
         {data.length === 0 ? (
-          <div className="h-[250px] flex items-center justify-center text-muted-foreground">
+          <div className="h-[300px] flex items-center justify-center text-muted-foreground text-sm">
             No investments yet
           </div>
         ) : (
-          <div>
-            <ResponsiveContainer width="100%" height={isMobile ? 250 : 250}>
-              <PieChart>
-                <Pie
-                  data={data}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={isMobile ? 50 : 60}
-                  outerRadius={isMobile ? 70 : 80}
-                  paddingAngle={2}
-                  dataKey="value"
+          <div className="flex flex-col md:flex-row items-center gap-8 h-full md:h-[300px]">
+            {/* Donut Chart */}
+            <div className="relative w-full md:w-1/2 h-[260px] flex-shrink-0">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    activeIndex={activeIndex}
+                    activeShape={renderActiveShape}
+                    data={data}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={isMobile ? 65 : 75}
+                    outerRadius={isMobile ? 85 : 95}
+                    paddingAngle={4}
+                    dataKey="value"
+                    onMouseEnter={(_, index) => setActiveIndex(index)}
+                    stroke="none"
+                    cornerRadius={5}
+                  >
+                    {data.map((entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={COLORS[index % COLORS.length]}
+                        className="transition-all duration-300 ease-in-out hover:opacity-100 opacity-90"
+                      />
+                    ))}
+                  </Pie>
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Custom Legend */}
+            <div className="w-full md:w-1/2 flex flex-col gap-3 overflow-y-auto max-h-[260px] pr-2 custom-scrollbar">
+              {data.map((item, index) => (
+                <div
+                  key={item.name}
+                  onMouseEnter={() => setActiveIndex(index)}
+                  className={cn(
+                    "flex items-center justify-between p-3 rounded-lg border border-white/5 transition-all duration-200 cursor-pointer group",
+                    activeIndex === index ? "bg-white/10 border-white/10 translate-x-1" : "hover:bg-white/5 hover:border-white/10"
+                  )}
                 >
-                  {data.map((entry, index) => (
-                    <Cell key={entry.name} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip
-                  formatter={(value: number) => {
-                    if (isPrivacyMode) {
-                      const percent = totalValue > 0 ? (value / totalValue) * 100 : 0;
-                      return [`${percent.toFixed(1)}%`, 'Allocation'];
-                    }
-                    return formatCurrency(value);
-                  }}
-                  contentStyle={{ backgroundColor: "#1A1F2C", borderColor: "#403E43", color: "#FFFFFF" }}
-                  itemStyle={{ color: "#FFFFFF" }}
-                />
-                <Legend
-                  formatter={(value) => <span className="text-foreground text-sm">{value}</span>}
-                  layout={isMobile ? 'horizontal' : 'vertical'}
-                  verticalAlign={isMobile ? 'bottom' : 'middle'}
-                  align={isMobile ? 'center' : 'right'}
-                />
-              </PieChart>
-            </ResponsiveContainer>
+                  <div className="flex items-center gap-3">
+                    <div
+                      className="w-3 h-3 rounded-full shadow-[0_0_8px_rgba(0,0,0,0.5)]"
+                      style={{ backgroundColor: COLORS[index % COLORS.length] }}
+                    />
+                    <div className="flex flex-col">
+                      <span className="font-bold text-sm text-white/90 group-hover:text-white transition-colors">
+                        {item.name}
+                      </span>
+                      <span className="text-xs text-white/50 font-medium">
+                        {totalValue > 0 ? ((item.value / totalValue) * 100).toFixed(1) : 0}%
+                      </span>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="font-mono text-sm font-medium text-white/80">
+                      {isPrivacyMode ? "****" : formatCurrency(item.value)}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </CardContent>
