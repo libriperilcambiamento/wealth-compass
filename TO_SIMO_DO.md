@@ -34,3 +34,10 @@ This document tracks manual actions and considerations for you to address.
 - [ ] **Manifest**: Check Developer Tools -> Application -> Manifest to see valid configuration.
 - [ ] **Installable**: Verify "Install" icon appears in address bar (Chrome) or "Add to Home Screen" works on mobile.
 - [ ] **Icons on Mobile**: When added to home screen, verify the new icon is used.
+
+# GitHub Actions Setup (Manual Steps)
+- [ ] **Sync Fork**: Ensure your fork is synced with the latest changes (specifically the new `.github/workflows/deploy.yml` file).
+- [ ] **Configure Pages**: Go to your Fork's repository settings -> **Pages**.
+- [ ] **Change Source**: Under "Build and deployment", change the **Branch** from `gh-pages` (or `None`) to `gh-pages-webapp`.
+- [ ] **Save**: Click Save.
+- [ ] **Verify**: Visit the provided URL to confirm the Web App is loading correctly.

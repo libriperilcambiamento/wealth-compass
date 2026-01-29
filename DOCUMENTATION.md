@@ -214,3 +214,25 @@ Implemented PWA capabilities to allow the application to be installed as a stand
 
 3.  **HTML Integration**:
     -   Updated `index.html` to link to the new manifest and icons.
+
+# GitHub Actions Deployment (Jan 29, 2026)
+
+## Overview
+Implemented an automated deployment workflow using GitHub Actions to enable continuous deployment for the Web App, specifically addressing the need to deploy from a fork without conflicting with the main repository's website.
+
+## Changes
+1.  **Workflow File (`.github/workflows/deploy.yml`)**:
+    -   **Trigger**: Fires on `push` to `main` branch.
+    -   **Process**:
+        -   Checkout code.
+        -   Install dependencies (`npm ci`).
+        -   Build project (`npm run build`).
+        -   Deploy the `dist` folder to a **new branch** named `gh-pages-webapp`.
+    -   **Rationale**: By deploying to `gh-pages-webapp` instead of `gh-pages`, we ensure the "Web App" deployment does not overwrite the "Website" deployment on the main repository.
+
+## Verification
+-   **Manual**:
+    -   Push changes to `main`.
+    -   Observe action run in "Actions" tab.
+    -   Verify branch `gh-pages-webapp` is created/updated.
+    -   (User Action) Switch GitHub Pages source to this new branch.
