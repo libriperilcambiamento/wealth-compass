@@ -211,6 +211,7 @@ Implemented PWA capabilities to allow the application to be installed as a stand
 2.  **Manifest**:
     -   Created `public/manifest.webmanifest`.
     -   Configured for `standalone` display with correct name and colors.
+    -   **Start URL Update**: Updated `start_url` to `/wealth-compass/sw/dashboard` to ensure the PWA opens directly to the application dashboard instead of the website homepage.
 
 3.  **HTML Integration**:
     -   Updated `index.html` to link to the new manifest and icons.

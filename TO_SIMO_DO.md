@@ -32,6 +32,7 @@ This document tracks manual actions and considerations for you to address.
 
 # PWA Verification
 - [ ] **Manifest**: Check Developer Tools -> Application -> Manifest to see valid configuration.
+- [ ] **Start URL**: Verify the App opens directly to the Dashboard `/sw/dashboard`.
 - [ ] **Installable**: Verify "Install" icon appears in address bar (Chrome) or "Add to Home Screen" works on mobile.
 - [ ] **Icons on Mobile**: When added to home screen, verify the new icon is used.
 
