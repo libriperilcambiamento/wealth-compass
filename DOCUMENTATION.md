@@ -196,3 +196,21 @@ Fixed a "Rendered fewer hooks than expected" error in `LoginPage` caused by an e
 
 ## Verification
 -   **Manual**: The error should no longer appear when accessing the login page, even if the authentication state changes.
+
+# PWA Configuration (Jan 29, 2026)
+
+## Overview
+Implemented PWA capabilities to allow the application to be installed as a standalone app with a custom icon.
+
+## Changes
+1.  **Icon Generation**:
+    -   Generated standard PWA icons (192x192, 512x512) and Apple Touch Icon from source image.
+    -   **Optimization**: Applied automatic center-cropping and trimming to maximize the logo size (90% fill factor) within the icon square.
+    -   Replaced standard favicon with generated 64x64 PNG.
+
+2.  **Manifest**:
+    -   Created `public/manifest.webmanifest`.
+    -   Configured for `standalone` display with correct name and colors.
+
+3.  **HTML Integration**:
+    -   Updated `index.html` to link to the new manifest and icons.
