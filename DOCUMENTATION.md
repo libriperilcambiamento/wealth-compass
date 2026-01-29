@@ -205,7 +205,7 @@ Implemented PWA capabilities to allow the application to be installed as a stand
 ## Changes
 1.  **Icon Generation**:
     -   Generated standard PWA icons (192x192, 512x512) and Apple Touch Icon from source image.
-    -   **Optimization**: Applied automatic center-cropping and trimming to maximize the logo size (90% fill factor) within the icon square.
+    -   **Optimization**: Applied aggressive trimming to remove all transparent borders, scaling the logo to **100% fill** of the icon container.
     -   Replaced standard favicon with generated 64x64 PNG.
 
 2.  **Manifest**:
