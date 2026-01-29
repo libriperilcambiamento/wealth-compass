@@ -244,3 +244,8 @@ If the workflow does not run automatically on the Fork:
     -   Go to **Actions** tab.
     -   Select **Deploy Web App**.
     -   Click **Run workflow**.
+
+## Configuration: Secrets (Supabase)
+For the application to connect to the database, you must configure the following **Repository Secrets** in the Fork settings (Settings > Secrets and variables > Actions):
+-   `VITE_SUPABASE_URL`: Your Supabase Project URL.
+-   `VITE_SUPABASE_ANON_KEY`: Your Supabase Anon Key.

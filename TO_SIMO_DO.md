@@ -35,6 +35,18 @@ This document tracks manual actions and considerations for you to address.
 - [ ] **Installable**: Verify "Install" icon appears in address bar (Chrome) or "Add to Home Screen" works on mobile.
 - [ ] **Icons on Mobile**: When added to home screen, verify the new icon is used.
 
+
+# GitHub Secrets Setup (CRITICAL for Supabase)
+- [ ] **Open Settings**: Go to your Fork's repository settings -> **Secrets and variables** -> **Actions**.
+- [ ] **New Repository Secret**: Click the green button.
+- [ ] **Add URL**:
+    -   Name: `VITE_SUPABASE_URL`
+    -   Value: (Copy from your local `.env.local` file)
+- [ ] **Add KEY**:
+    -   Name: `VITE_SUPABASE_ANON_KEY`
+    -   Value: (Copy from your local `.env.local` file)
+- [ ] **Trigger Build**: After adding these, modifying this file and pushing will verify it works.
+
 # GitHub Actions Setup (FORK - IMPORTANT)
 - [ ] **Enable Actions**: Go to the **Actions** tab in your Fork. If you see a warning or a big green button, verify/enable workflows.
 - [ ] **Trigger via Push**: GitHub might not recognize the "Manual Run" button yet. To force it to start:
